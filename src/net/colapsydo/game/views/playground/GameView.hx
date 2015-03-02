@@ -17,7 +17,6 @@ class GameView extends Sprite
 	
 	var _grid:GridView;
 	var _distribution:DistributionView;
-	var _activePair:ActivePairView;
 	
 	public function new(gameCore:GameCore) {
 		super();
@@ -35,11 +34,35 @@ class GameView extends Sprite
 		_grid.x = (stage.stageWidth - _grid.width) * .5;
 		_grid.y = (stage.stageHeight - _grid.height) * .5;
 		
-		stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
-		stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
+		updateHandler();
+		_gameCore.addEventListener(GameCore.UPDATE, updateHandler);
 	}
 	
 	//HANDLERS
+	
+	private function updateHandler(e:Event=null):Void {
+		switch(_gameCore.getGameState()) {
+			case DISTRIBUTION:
+			case PLAY:
+				addEventListener(Event.ENTER_FRAME, playHandler);
+				stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+				stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
+			case GRAVITY:
+				
+				removeEventListener(Event.ENTER_FRAME, playHandler);
+				stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+				stage.removeEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
+				
+				addEventListener(Event.ENTER_FRAME, gravityHandler);
+			case CHAIN:
+			
+		}
+	}
+	
+	private function playHandler(e:Event):Void {
+		_grid.update();
+		_controller.update();
+	}
 	
 	private function keyDownHandler(e:KeyboardEvent):Void {
 		_controller.keyboardDown(e);
@@ -49,12 +72,7 @@ class GameView extends Sprite
 		_controller.keyboardUp(e);
 	}
 	
-	public function update():Void {
-		//switch(_gameCore.getGameState()) {
-			//
-		//}
-		_grid.update();
-		_controller.update();
+	private function gravityHandler(e:Event):Void {
+		
 	}
-	
 }

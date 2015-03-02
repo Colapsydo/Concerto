@@ -43,6 +43,10 @@ class GameGrid
 	
 	//PUBLIC FUNCTIONS
 	
+	public function addNote(type:Int, posX:Int, posY:Int) {
+		_grid[posY * 8 + posX] = type;
+	}
+	
 	public function getLeftLimit(controlIndex:Int):Int{
 		return(0);
 	}

@@ -37,11 +37,11 @@ class NoteBall extends Sprite
 	function draw() {
 		this.graphics.clear();
 		switch(_type) {
-			case 0:
-				this.graphics.beginFill(0xFF0000);
 			case 1:
-				this.graphics.beginFill(0x00FF00);
+				this.graphics.beginFill(0xFF0000);
 			case 2:
+				this.graphics.beginFill(0x00FF00);
+			case 3:
 				this.graphics.beginFill(0x0000FF);
 		}
 		this.graphics.drawCircle(0, 0, _size);

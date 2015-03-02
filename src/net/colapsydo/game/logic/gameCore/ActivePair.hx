@@ -28,6 +28,7 @@ class ActivePair extends EventDispatcher
 	
 	var _slaveNote:Int;
 	var _slavePos:SlavePosition;
+	var _slaveAbsPosX:Int;
 	var _slaveFinalPos:Int; //Lign index of the final position
 	
 	var _descentVelocity:Float;
@@ -99,7 +100,18 @@ class ActivePair extends EventDispatcher
 		}
 		if (_freeTime < 0) {
 			//End of PLAY
-			//dispatchEvent(new Event(ActivePair.PLAYED));
+			switch(_slavePos) {
+				case LEFT:
+					_slaveAbsPosX = _masterAbsPosX -1;
+				case TOP,BOTTOM:
+					_slaveAbsPosX = _masterAbsPosX ;
+				case RIGHT:
+					_slaveAbsPosX = _masterAbsPosX + 1;
+			}
+			_grid.addNote(_masterNote, _masterAbsPosX, _masterFinalPos);
+			_grid.addNote(_slaveNote, _slaveAbsPosX, _slaveFinalPos);
+			
+			dispatchEvent(new Event(ActivePair.PLAYED));
 		}
 	}
 
@@ -178,12 +190,15 @@ class ActivePair extends EventDispatcher
 	//GETTERS && SETTERS
 	
 	public function getMasterNote():Int {return(_masterNote);}
-	public function getSlaveNote():Int { return(_slaveNote); }
 	public function getMasterPosX():Int { return (_masterAbsPosX);}
 	public function getMasterPosY():Float { return (_masterPosY); }
+	public function getMasterFinalPos():Int { return(_masterFinalPos); }
+	public function getSlaveNote():Int { return(_slaveNote); }
 	public function getSlavePos():SlavePosition { return(_slavePos); }
+	public function getSlavePosX():Int { return (_slaveAbsPosX);}
+	public function getSlaveFinalPos():Int { return(_slaveFinalPos); }
 	public function getRotationOccured():Bool { return(_rotationOccured); }
 	public function getTrigo():Bool { return(_trigo); }
-	public function getMasterFinalPos():Int { return(_masterFinalPos); }
-	public function getSlaveFinalPos():Int { return(_slaveFinalPos); }
+	
+	
 }

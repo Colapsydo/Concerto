@@ -25,12 +25,5 @@ class PlaygroundView extends Sprite
 		
 		_game = new GameView(_playground.getGameCore());
 		addChild(_game);
-		
-		_playground.addEventListener(Playground.UPDATE, updateHandler);
 	}
-	
-	private function updateHandler(e:Event):Void {
-		_game.update();
-	}
-	
 }

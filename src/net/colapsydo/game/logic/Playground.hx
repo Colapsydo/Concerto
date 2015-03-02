@@ -13,8 +13,6 @@ class Playground extends Sprite
 {
 	var _gameCore:GameCore;
 	
-	static public inline var UPDATE:String = "update";
-	
 	public function new() {
 		super();
 		addEventListener(Event.ADDED_TO_STAGE, init);
@@ -23,12 +21,7 @@ class Playground extends Sprite
 	function init(e:Event):Void{
 		removeEventListener(Event.ADDED_TO_STAGE, init);
 		_gameCore = new GameCore(0);
-		addEventListener(Event.ENTER_FRAME, updateHandler);
-	}
-	
-	private function updateHandler(e:Event):Void {
-		_gameCore.update();
-		dispatchEvent(new Event(Playground.UPDATE));
+		addChild(_gameCore);
 	}
 	
 	//GETTERS && SETTERS

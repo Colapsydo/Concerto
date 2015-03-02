@@ -39,7 +39,7 @@ class Distribution
 	//PRIVATE FUNCTIONS
 	
 	function uniformDistribution():Int {
-		return(_randomGenerator.random(_maxType));
+		return(_randomGenerator.random(_maxType)+1);
 	}
 	
 	//PUBLIC FUNCTIONS

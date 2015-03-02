@@ -2,6 +2,7 @@ package net.colapsydo.game.views.playground;
 
 import net.colapsydo.game.logic.gameCore.GameCore;
 import net.colapsydo.game.logic.gameCore.GameGrid;
+import net.colapsydo.game.logic.gameCore.ActivePair;
 import openfl.display.Shape;
 import openfl.display.Sprite;
 import openfl.events.Event;
@@ -17,7 +18,11 @@ class GridView extends Sprite
 	var _gridData:GameGrid;
 	var _grid:Vector<Int>;
 	
+	var _noteballPool:NoteballPool;
+	var _gridNote:Vector<Vector<NoteBall>>;
+	
 	var _background:Shape;
+	var _noteBallsContainer:Sprite;
 	var _activePair:ActivePairView;
 	var _mask:Shape;
 	
@@ -38,6 +43,15 @@ class GridView extends Sprite
 		if (_step == 0) {
 			_step = Std.int(stage.stageHeight * .95 / 15);
 			NoteBall.setSize(GridView.getStep());
+		}
+		
+		_noteballPool = new NoteballPool();
+		
+		_gridNote = new Vector<Vector<NoteBall>>();
+		var column:Vector<NoteBall>;
+		for (i in 0...6) {
+			column =  new Vector<NoteBall>();
+			_gridNote.push(column);
 		}
 		
 		_background = new Shape();
@@ -62,6 +76,9 @@ class GridView extends Sprite
 		_background.graphics.lineTo(8 * _step, 2*_step);
 		addChild(_background);
 		
+		_noteBallsContainer = new Sprite();
+		addChild(_noteBallsContainer);
+		
 		_mask = new Shape();
 		_mask.graphics.beginFill(0xFFFFFF);
 		_mask.graphics.drawRect(_step, 0, 6 * _step, 14 * _step);
@@ -71,6 +88,13 @@ class GridView extends Sprite
 		_activePair = new ActivePairView(_gameCore.getActivePair());
 		addChild(_activePair);
 		_activePair.mask = _mask;
+		_activePair.addEventListener(ActivePair.PLAYED, playedHandler);
+	}
+	
+	//HANDLERS
+	
+	private function playedHandler(e:Event):Void {
+		trace("grid active pair played");
 	}
 	
 	//PUBLIC FUNCTIONS

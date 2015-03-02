@@ -58,6 +58,7 @@ class ActivePairView extends Sprite
 		newPair();
 		
 		_activePair.addEventListener(ActivePair.FINALPOSCHANGE, finalPosChangeHandler);
+		_activePair.addEventListener(ActivePair.PLAYED, playedHandler);
 	}
 
 	
@@ -65,6 +66,10 @@ class ActivePairView extends Sprite
 	
 	private function finalPosChangeHandler(e:Event):Void {
 		previewPosChange();
+	}
+	
+	private function playedHandler(e:Event):Void {
+		dispatchEvent(e);
 	}
 	
 	private function rotationHandler(e:Event):Void {
