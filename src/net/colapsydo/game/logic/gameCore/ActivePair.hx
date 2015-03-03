@@ -56,7 +56,7 @@ class ActivePair extends EventDispatcher
 		newPair();
 	}
 	
-	function newPair():Void {
+	public function newPair():Void {
 		_masterNote = _distrib.getNewNote();
 		_slaveNote =  _distrib.getNewNote();
 		
@@ -93,11 +93,11 @@ class ActivePair extends EventDispatcher
 	}
 	
 	function checkFinalPosCrossed() {
-		if (_masterPosY < _masterFinalPos + 1.5) {
+		if (_masterPosY < _masterFinalPos + .5) {
 			_freeTime-= _descentVelocity;
-			_masterPosY = _masterFinalPos + 1.5;
-			_masterAbsPosY = Std.int(_masterPosY - .5);
+			_masterPosY = _masterFinalPos + .5;
 		}
+		_masterAbsPosY = Std.int(_masterPosY - .5);
 		if (_freeTime < 0) {
 			//End of PLAY
 			switch(_slavePos) {
@@ -133,6 +133,7 @@ class ActivePair extends EventDispatcher
 		_masterPosY -= _descentVelocity;
 		
 		//each time _masterAbsPosY change need recalculate L/R side limit
+		//si masterPos est inférieur ou égale à 12.5 alors on check en dessous de 11
 		if (_masterPosY <= _masterAbsPosY + .5) { //change of lign
 			checkFinalPosCrossed();
 			defineSideLimits();
@@ -192,6 +193,7 @@ class ActivePair extends EventDispatcher
 	public function getMasterNote():Int {return(_masterNote);}
 	public function getMasterPosX():Int { return (_masterAbsPosX);}
 	public function getMasterPosY():Float { return (_masterPosY); }
+	//public function getMasterAbsPosY():Float { return (_masterAbsPosY); }
 	public function getMasterFinalPos():Int { return(_masterFinalPos); }
 	public function getSlaveNote():Int { return(_slaveNote); }
 	public function getSlavePos():SlavePosition { return(_slavePos); }

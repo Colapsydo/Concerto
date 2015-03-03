@@ -69,6 +69,9 @@ class ActivePairView extends Sprite
 	}
 	
 	private function playedHandler(e:Event):Void {
+		_masterPreview.visible = false;
+		_slavePreview.visible = false;
+		_pairSprite.visible = false;
 		dispatchEvent(e);
 	}
 	
@@ -83,7 +86,28 @@ class ActivePairView extends Sprite
 		_slaveNote.rotation = -_slaveContainer.rotation;
 	}
 	
-	function newPair():Void {
+	function previewPosChange() {
+		_masterPreview.x = (_activePair.getMasterPosX()+.5) * _ray;
+		_masterPreview.y = (14.5 - _activePair.getMasterFinalPos()) * _ray;
+		
+		switch(_activePair.getSlavePos()) {
+			case LEFT:
+				_slavePreview.x = _masterPreview.x - _ray;
+			case RIGHT:
+				_slavePreview.x = _masterPreview.x + _ray;
+			case TOP, BOTTOM:
+				_slavePreview.x = _masterPreview.x ;
+		}
+		_slavePreview.y = (14.5 - _activePair.getSlaveFinalPos()) * _ray;
+	}
+	
+	//PUBLIC FUNCTIONS
+	
+	public function newPair():Void {
+		_masterPreview.visible = true;
+		_slavePreview.visible = true;
+		_pairSprite.visible = true;
+		
 		var type:Int = _activePair.getMasterNote();
 		_masterNote.convert(type);
 		_masterPreview.convert(type);
@@ -94,31 +118,14 @@ class ActivePairView extends Sprite
 		_slaveContainer.rotation = 270;
 		_slaveNote.rotation = -_slaveContainer.rotation;
 		_pairSprite.x = (_activePair.getMasterPosX()+.5) * _ray;
-		_pairSprite.y = (16 - _activePair.getMasterPosY()) * _ray;
+		_pairSprite.y = (15 - _activePair.getMasterPosY()) * _ray;
 		
 		previewPosChange();
 	}
 	
-	function previewPosChange() {
-		_masterPreview.x = (_activePair.getMasterPosX()+.5) * _ray;
-		_masterPreview.y = ((14 - _activePair.getMasterFinalPos()) + .5) * _ray;
-		
-		switch(_activePair.getSlavePos()) {
-			case LEFT:
-				_slavePreview.x = _masterPreview.x - _ray;
-			case RIGHT:
-				_slavePreview.x = _masterPreview.x + _ray;
-			case TOP, BOTTOM:
-				_slavePreview.x = _masterPreview.x ;
-		}
-		_slavePreview.y = ((14 - _activePair.getSlaveFinalPos())+.5) * _ray;
-	}
-	
-	//PUBLIC FUNCTIONS
-	
 	public function update():Void {
 		_pairSprite.x = (_activePair.getMasterPosX()+.5) * _ray;
-		_pairSprite.y = (16 - _activePair.getMasterPosY()) * _ray;
+		_pairSprite.y = (15 - _activePair.getMasterPosY()) * _ray;
 		
 		if (_rotationInProgress == false && _activePair.getRotationOccured() == true) {
 			_actualRotation = Std.int(_slaveContainer.rotation);

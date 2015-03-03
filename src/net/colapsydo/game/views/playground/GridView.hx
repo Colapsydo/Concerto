@@ -17,13 +17,15 @@ class GridView extends Sprite
 	var _gameCore:GameCore;
 	var _gridData:GameGrid;
 	var _grid:Vector<Int>;
+	var _activePair:ActivePair;
 	
 	var _noteballPool:NoteballPool;
 	var _gridNote:Vector<Vector<NoteBall>>;
+	var _gravityNum:Int;
 	
 	var _background:Shape;
 	var _noteBallsContainer:Sprite;
-	var _activePair:ActivePairView;
+	var _activePairView:ActivePairView;
 	var _mask:Shape;
 	
 	static var _step:Int;
@@ -39,6 +41,7 @@ class GridView extends Sprite
 		
 		_gridData = _gameCore.getGameGrid();
 		_grid = _gridData.getGrid();
+		_activePair = _gameCore.getActivePair();
 		
 		if (_step == 0) {
 			_step = Std.int(stage.stageHeight * .95 / 15);
@@ -78,6 +81,8 @@ class GridView extends Sprite
 		
 		_noteBallsContainer = new Sprite();
 		addChild(_noteBallsContainer);
+		_noteBallsContainer.addEventListener(NoteBall.LANDED, landedHandler, true);
+		_noteBallsContainer.addEventListener(NoteBall.BOUNCED, bouncedHandler, true);
 		
 		_mask = new Shape();
 		_mask.graphics.beginFill(0xFFFFFF);
@@ -85,27 +90,78 @@ class GridView extends Sprite
 		_mask.graphics.endFill();
 		addChild(_mask);
 		
-		_activePair = new ActivePairView(_gameCore.getActivePair());
-		addChild(_activePair);
-		_activePair.mask = _mask;
-		_activePair.addEventListener(ActivePair.PLAYED, playedHandler);
+		_activePairView = new ActivePairView(_activePair);
+		addChild(_activePairView);
+		_activePairView.mask = _mask;
+		_activePairView.addEventListener(ActivePair.PLAYED, playedHandler);
 	}
 	
 	//HANDLERS
 	
 	private function playedHandler(e:Event):Void {
-		trace("grid active pair played");
+		//insert master
+		addNoteToGridView(_activePair.getMasterNote(), _activePair.getMasterPosX(), _activePair.getMasterFinalPos(), _activePair.getMasterPosY());
+		var slavePosY:Float;
+		switch(_activePair.getSlavePos()) {
+			case LEFT, RIGHT:
+				slavePosY = _activePair.getMasterPosY();
+			case TOP:
+				slavePosY = _activePair.getMasterPosY()+1;
+			case BOTTOM:
+				slavePosY = _activePair.getMasterPosY()-1;
+		}
+		addNoteToGridView(_activePair.getSlaveNote(), _activePair.getSlavePosX(), _activePair.getSlaveFinalPos(), slavePosY);
 	}
+	
+	private function landedHandler(e:Event):Void {
+		if (Std.is(e.target, NoteBall) == true) {
+			cast(e.target, NoteBall).changeState(BOUNCING);
+			//if indexY>1 bounce under if under are idle
+		}
+	}
+	
+	private function bouncedHandler(e:Event):Void {
+		_gravityNum--;
+		trace(_gravityNum);
+		if (_gravityNum == 0) {
+			_gameCore.allLanded();
+		}
+	}
+	
+	//PRIVATE FUNCTION
+	
+	function addNoteToGridView(type:Int, indexX:Int, indexY:Int, absY:Float):Void {
+		var noteBall:NoteBall = _noteballPool.getNoteball();
+		_noteBallsContainer.addChild(noteBall);
+		noteBall.convert(type);
+		noteBall.setIndexX(indexX);
+		noteBall.setIndexY(indexY);
+		noteBall.setPosY(absY);
+		_gridNote[indexX - 1].push(noteBall);
+		noteBall.changeState(FALLING);
+		_gravityNum++;
+	}
+	
+	//use of noteballPool
+		//var noteball:NoteBall = _noteballPool.getNoteball();
+		//noteball.convert(2);
+		//_gridNote[0].push(noteball);
+		//_noteballPool.discardNoteball(_gridNote[0].splice(0, 1)[0]);
 	
 	//PUBLIC FUNCTIONS
 	
+	public function newTurn() {
+		_activePairView.newPair();
+	}
+	
 	public function update() {
-		_activePair.update();
+		_activePairView.update();
 	}
 	
 	//GETTERS && SETTERS
 	
 	static public function getStep():Int { return(_step);}
+	
 	
 	
 	

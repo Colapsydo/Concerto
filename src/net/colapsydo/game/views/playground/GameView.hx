@@ -32,8 +32,11 @@ class GameView extends Sprite
 		_grid = new GridView(_gameCore);
 		addChild(_grid);
 		_grid.x = (stage.stageWidth - _grid.width) * .5;
-		_grid.y = (stage.stageHeight - _grid.height) * .5;
+		//_grid.y = (stage.stageHeight - _grid.height) * .5;
+		_grid.y = 30;
 		
+		stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+		stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
 		updateHandler();
 		_gameCore.addEventListener(GameCore.UPDATE, updateHandler);
 	}
@@ -44,16 +47,12 @@ class GameView extends Sprite
 		switch(_gameCore.getGameState()) {
 			case DISTRIBUTION:
 			case PLAY:
+				_grid.newTurn();
+				_controller.working(true);
 				addEventListener(Event.ENTER_FRAME, playHandler);
-				stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
-				stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
 			case GRAVITY:
-				
+				_controller.working(false);
 				removeEventListener(Event.ENTER_FRAME, playHandler);
-				stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
-				stage.removeEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
-				
-				addEventListener(Event.ENTER_FRAME, gravityHandler);
 			case CHAIN:
 			
 		}
@@ -70,9 +69,5 @@ class GameView extends Sprite
 	
 	private function keyUpHandler(e:KeyboardEvent):Void {
 		_controller.keyboardUp(e);
-	}
-	
-	private function gravityHandler(e:Event):Void {
-		
 	}
 }

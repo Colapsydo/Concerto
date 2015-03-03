@@ -63,6 +63,17 @@ class GameCore extends Sprite
 		dispatchEvent(new Event(GameCore.UPDATE));
 	}
 	
+	//PUBLIC FUNCTIONS
+	
+	public function allLanded():Void {
+		//if solutions chain state
+		//else
+		_activePair.newPair();
+		_state = PLAY;
+		_activePair.addEventListener(ActivePair.PLAYED, playedHandler);
+		dispatchEvent(new Event(GameCore.UPDATE));
+	}
+	
 	//GETTERS && SETTERS
 	
 	public function getGameGrid():GameGrid { return(_grid); }
