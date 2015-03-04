@@ -49,7 +49,7 @@ class NoteBall extends Sprite
 			removeEventListener(Event.ENTER_FRAME, fallingHandler);
 			dispatchEvent(new Event(NoteBall.LANDED));
 		}else {
-			_posY += _size * .1;
+			_posY += _size * .3;
 		}
 		this.y = _posY;
 	}

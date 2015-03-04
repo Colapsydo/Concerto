@@ -95,9 +95,23 @@ class ActivePair extends EventDispatcher
 	}
 	
 	function checkFinalPosCrossed() {
-		if (_masterPosY < _masterFinalPos + .5) {
-			_freeTime-= _descentVelocity;
-			_masterPosY = _masterFinalPos + .5;
+		var masterLanded:Bool = _masterPosY < _masterFinalPos + .5;
+		switch(_slavePos) {
+			case LEFT,RIGHT:
+				if (masterLanded == true || _masterPosY < _slaveFinalPos + .5) {
+					_freeTime-= _descentVelocity;
+					_masterPosY = masterLanded==true ? _masterFinalPos + .5 : _slaveFinalPos+.5;
+				}
+			case TOP:
+				if (masterLanded == true) {
+					_freeTime-= _descentVelocity;
+					_masterPosY = _masterFinalPos + .5;
+				}
+			case BOTTOM:
+				if (_masterPosY-1 < _slaveFinalPos + .5) {
+					_freeTime-= _descentVelocity;
+					_masterPosY = _slaveFinalPos+1.5;
+				}	
 		}
 		_masterAbsPosY = Std.int(_masterPosY - .5);
 		if (_freeTime < 0) {
