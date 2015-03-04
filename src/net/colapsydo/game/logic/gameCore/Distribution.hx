@@ -52,11 +52,15 @@ class Distribution
 		_nextPairs[3] = uniformDistribution();
 		_noteNum++;
 		trace(_nextPairs);
+		if (_noteNum % 2 == 0) {
+			//dispatchEvent
+		}
 		return(note);
 	}
 	
 	//GETTERS && SETTERS
 	
 	public function getSeed():Int { return(_gameSeed); }
+	public function getNote(index:Int):Int { return(_nextPairs[index]);}
 	
 }

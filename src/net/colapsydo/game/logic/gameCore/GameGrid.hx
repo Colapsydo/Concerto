@@ -43,6 +43,18 @@ class GameGrid
 	
 	//PUBLIC FUNCTIONS
 	
+	public function defineEmptyCells():Void{
+		for (i in 1...7) {
+			for (j in 1...16) {
+				if (_grid[j * 8 + i] == 0) {
+					_firstEmptyCells[i] = j;
+					break;
+				}
+			}
+			trace(i, _firstEmptyCells[i]);
+		}
+	}
+	
 	public function addNote(type:Int, posX:Int, posY:Int) {
 		_grid[posY * 8 + posX] = type;
 	}

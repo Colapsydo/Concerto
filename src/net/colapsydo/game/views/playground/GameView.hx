@@ -33,12 +33,19 @@ class GameView extends Sprite
 		addChild(_grid);
 		_grid.x = (stage.stageWidth - _grid.width) * .5;
 		//_grid.y = (stage.stageHeight - _grid.height) * .5;
-		_grid.y = 30;
+		_grid.y = 20;
+		
+		_distribution = new DistributionView(_gameCore.getDistribution());
+		addChild(_distribution);
+		_distribution.x = _grid.x + _grid.width + 10;
+		_distribution.y = 20;
 		
 		stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
 		stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
 		updateHandler();
 		_gameCore.addEventListener(GameCore.UPDATE, updateHandler);
+		
+		_gameCore.startGame();
 	}
 	
 	//HANDLERS
@@ -46,6 +53,8 @@ class GameView extends Sprite
 	private function updateHandler(e:Event=null):Void {
 		switch(_gameCore.getGameState()) {
 			case DISTRIBUTION:
+				_distribution.next();
+				_distribution.addEventListener(DistributionView.SWITCHED, distribHandler);
 			case PLAY:
 				_grid.newTurn();
 				_controller.working(true);
@@ -56,6 +65,11 @@ class GameView extends Sprite
 			case CHAIN:
 			
 		}
+	}
+	
+	private function distribHandler(e:Event):Void {
+		_distribution.addEventListener(DistributionView.SWITCHED, distribHandler);
+		_gameCore.play();
 	}
 	
 	private function playHandler(e:Event):Void {

@@ -53,7 +53,9 @@ class ActivePair extends EventDispatcher
 	function init():Void {
 		_masterAbsPosX = 2;
 		_descentVelocity = 0.02;
-		newPair();
+		_masterPosY=15.5;
+		_slavePos = TOP;
+		//newPair();
 	}
 	
 	public function newPair():Void {

@@ -38,26 +38,18 @@ class GameCore extends Sprite
 		_grid = new GameGrid();
 		_distribution = new Distribution();
 		_activePair = new ActivePair(_grid, _distribution);
-		_state = PLAY;
-		
-		addEventListener(Event.ENTER_FRAME, efHandler);
-		_activePair.addEventListener(ActivePair.PLAYED, playedHandler);
+		_state = DISTRIBUTION;
 	}
 	
 	//HANDLERS
 	
 	private function efHandler(e:Event):Void {
-		switch(_state) {
-			case DISTRIBUTION:
-			case PLAY:
-				_activePair.update();
-			case GRAVITY:
-			case CHAIN:			
-		}
+		_activePair.update();
 	}
 	
 	private function playedHandler(e:Event):Void {
 		//Send event to views for gravity
+		removeEventListener(Event.ENTER_FRAME, efHandler);
 		_activePair.removeEventListener(ActivePair.PLAYED, playedHandler);
 		_state = GRAVITY;
 		dispatchEvent(new Event(GameCore.UPDATE));
@@ -65,18 +57,33 @@ class GameCore extends Sprite
 	
 	//PUBLIC FUNCTIONS
 	
-	public function allLanded():Void {
-		//if solutions chain state
-		//else
+	public function startGame():Void {
 		_activePair.newPair();
-		_state = PLAY;
-		_activePair.addEventListener(ActivePair.PLAYED, playedHandler);
+		_state = DISTRIBUTION;
 		dispatchEvent(new Event(GameCore.UPDATE));
+	}
+	
+	public function play():Void{
+		_state = PLAY;
+		dispatchEvent(new Event(GameCore.UPDATE));	
+		_activePair.addEventListener(ActivePair.PLAYED, playedHandler);
+		addEventListener(Event.ENTER_FRAME, efHandler);
+	}
+	
+	public function allLanded():Void {
+		//if solutions then chain state
+		//_state = CHAIN;
+		//else
+		_grid.defineEmptyCells();
+		_activePair.newPair();
+		_state = DISTRIBUTION;
+		dispatchEvent(new Event(GameCore.UPDATE));	
 	}
 	
 	//GETTERS && SETTERS
 	
 	public function getGameGrid():GameGrid { return(_grid); }
+	public function getDistribution():Distribution { return(_distribution); }
 	public function getActivePair():ActivePair { return(_activePair);}
 	public function getGameState():GameState { return(_state); }
 	

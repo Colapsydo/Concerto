@@ -38,6 +38,7 @@ class NoteBall extends Sprite
 	private function init(e:Event):Void {
 		removeEventListener(Event.ADDED_TO_STAGE, init);
 		_posY = _targetY = 0;
+		draw();
 	}
 	
 	//HANDLERS
@@ -73,7 +74,7 @@ class NoteBall extends Sprite
 	
 	//PRIVATE FUNCTIONS
 	
-	function draw(grid:Bool) {
+	function draw(grid:Bool=false) {
 		this.graphics.clear();
 		switch(_type) {
 			case 1:

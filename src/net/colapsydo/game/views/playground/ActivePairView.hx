@@ -37,9 +37,9 @@ class ActivePairView extends Sprite
 	private function init(e:Event):Void {
 		removeEventListener(Event.ADDED_TO_STAGE, init);
 		
-		_masterPreview = new NotePreview(0);
+		_masterPreview = new NotePreview(1);
 		addChild(_masterPreview);
-		_slavePreview = new NotePreview(0);
+		_slavePreview = new NotePreview(1);
 		addChild(_slavePreview);
 		
 		_pairSprite = new Sprite();
@@ -47,15 +47,17 @@ class ActivePairView extends Sprite
 		
 		_ray = GridView.getStep();
 		
-		_masterNote = new NoteBall(0);
+		_masterNote = new NoteBall(1);
 		_pairSprite.addChild(_masterNote);
 		_slaveContainer = new Sprite();
 		_pairSprite.addChild(_slaveContainer);
-		_slaveNote = new NoteBall(0);
+		_slaveNote = new NoteBall(1);
 		_slaveContainer.addChild(_slaveNote);
 		_slaveNote.x = _ray;
 		
-		newPair();
+		_masterPreview.visible = false;
+		_slavePreview.visible = false;
+		_pairSprite.visible = false;
 		
 		_activePair.addEventListener(ActivePair.FINALPOSCHANGE, finalPosChangeHandler);
 		_activePair.addEventListener(ActivePair.PLAYED, playedHandler);
