@@ -73,7 +73,7 @@ class ActivePair extends EventDispatcher
 		defineFinalPos();
 		defineSideLimits();
 		
-		_freeTime = 2;
+		_freeTime = 1;
 	}
 	
 	function defineFinalPos():Void{

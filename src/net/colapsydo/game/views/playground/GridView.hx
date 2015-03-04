@@ -133,7 +133,7 @@ class GridView extends Sprite
 	function addNoteToGridView(type:Int, indexX:Int, indexY:Int, absY:Float):Void {
 		var noteBall:NoteBall = _noteballPool.getNoteball();
 		_noteBallsContainer.addChild(noteBall);
-		noteBall.convert(type);
+		noteBall.convert(type,true);
 		noteBall.setIndexX(indexX);
 		noteBall.setIndexY(indexY);
 		noteBall.setPosY(absY);

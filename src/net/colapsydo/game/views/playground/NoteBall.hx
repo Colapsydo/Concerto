@@ -38,7 +38,6 @@ class NoteBall extends Sprite
 	private function init(e:Event):Void {
 		removeEventListener(Event.ADDED_TO_STAGE, init);
 		_posY = _targetY = 0;
-		draw();
 	}
 	
 	//HANDLERS
@@ -55,24 +54,26 @@ class NoteBall extends Sprite
 	}
 	
 	private function bouncingHandler(e:Event):Void {
-		var scale = this.scaleY;
-		scale -= _dir * .1;
-		if (scale <= 0.5) {
-			scale = .5;
+		var scaleY = this.scaleY;
+		scaleY -= _dir * .08;
+		this.scaleX += _dir * .04;
+		if (scaleY <= 0.4) {
+			scaleY = .4;
 			_dir *= -1;
 		}
-		if (scale >= 1) {
-			scale = 1;
+		if (scaleY >= 1) {
+			scaleY = 1;
+			this.scaleX = 1;
 			removeEventListener(Event.ENTER_FRAME, bouncingHandler);
 			dispatchEvent(new Event(NoteBall.BOUNCED));
 		}
 		
-		this.scaleY = scale;
+		this.scaleY = scaleY;
 	}
 	
 	//PRIVATE FUNCTIONS
 	
-	function draw() {
+	function draw(grid:Bool) {
 		this.graphics.clear();
 		switch(_type) {
 			case 1:
@@ -82,19 +83,29 @@ class NoteBall extends Sprite
 			case 3:
 				this.graphics.beginFill(0x0000FF);
 		}
-		this.graphics.drawCircle(0, 0, _size);
+		if (grid == true) {
+			this.graphics.drawCircle(0, -_size, _size);
+		}else {
+			this.graphics.drawCircle(0, 0, _size);
+		}
 		this.graphics.endFill();
 		this.graphics.lineStyle(1, 0);
-		this.graphics.moveTo(0, 0);
-		this.graphics.lineTo(0, -_size);
-		_state = IDLE;
+		if (grid == true) {
+			this.graphics.moveTo(0, -_size);
+			this.graphics.lineTo(0, -2*_size);
+		}else {
+			this.graphics.moveTo(0, 0);
+			this.graphics.lineTo(0, -_size);
+		}
 	}
 	
 	//PUBLIC FUNCTIONS
 	
-	public function convert(type:Int):Void {
+	public function convert(type:Int, ?grid:Bool = false ):Void {
+		//grid will change the position resp y to have the scale animation on y
 		_type = type;
-		draw();
+		draw(grid);
+		_state = IDLE;
 	}
 	
 	public function changeState(state:NoteState):Void {
@@ -102,6 +113,7 @@ class NoteBall extends Sprite
 		switch(_state) {
 			case IDLE:
 			case FALLING:
+				trace(_targetY, _posY);
 				addEventListener(Event.ENTER_FRAME, fallingHandler);
 			case BOUNCING:
 				_dir = 1;
@@ -127,10 +139,10 @@ class NoteBall extends Sprite
 	}
 	public function setIndexY(indexY:Int):Void {
 		_indexY = indexY;
-		_targetY = (14.5 - indexY) * _size * 2;
+		_targetY = (15 - indexY) * _size * 2;
 	}
 	public function setPosY(posY:Float):Void {
-		_posY = (15-posY)*_size*2;
+		_posY = (15.5-posY)*_size*2;
 		this.y = _posY;
 	}
 }
