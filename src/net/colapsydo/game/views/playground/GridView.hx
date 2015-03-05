@@ -122,7 +122,7 @@ class GridView extends Sprite
 	
 	private function bouncedHandler(e:Event):Void {
 		_gravityNum--;
-		trace(_gravityNum);
+		//trace(_gravityNum);
 		if (_gravityNum == 0) {
 			_gameCore.allLanded();
 		}

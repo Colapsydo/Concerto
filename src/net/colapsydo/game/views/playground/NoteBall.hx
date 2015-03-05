@@ -114,7 +114,7 @@ class NoteBall extends Sprite
 		switch(_state) {
 			case IDLE:
 			case FALLING:
-				trace(_targetY, _posY);
+				//trace(_targetY, _posY);
 				addEventListener(Event.ENTER_FRAME, fallingHandler);
 			case BOUNCING:
 				_dir = 1;

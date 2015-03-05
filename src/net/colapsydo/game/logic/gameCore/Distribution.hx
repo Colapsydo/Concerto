@@ -51,7 +51,7 @@ class Distribution
 		}
 		_nextPairs[3] = uniformDistribution();
 		_noteNum++;
-		trace(_nextPairs);
+		//trace(_nextPairs);
 		if (_noteNum % 2 == 0) {
 			//dispatchEvent
 		}

@@ -29,6 +29,8 @@ class GameGrid
 		for (i in 0...8) {
 			_firstEmptyCells.push(1);
 		}
+		_firstEmptyCells[0] = 15;
+		_firstEmptyCells[7] = 15;
 		
 		readGrid();
 	}
@@ -51,7 +53,6 @@ class GameGrid
 					break;
 				}
 			}
-			trace(i, _firstEmptyCells[i]);
 		}
 	}
 	
@@ -59,11 +60,21 @@ class GameGrid
 		_grid[posY * 8 + posX] = type;
 	}
 	
-	public function getLeftLimit(controlIndex:Int):Int{
+	public function getLeftLimit(controlX:Int,controlY:Int):Int{
+		for (i in 1...controlX) {
+			if (_grid[controlY * 8 + (controlX - i)] != 0) {
+				return(controlX - i);
+			}
+		}
 		return(0);
 	}
 	
-	public function getRightLimit(controlIndex:Int):Int{
+	public function getRightLimit(controlX:Int, controlY:Int):Int{
+		for (i in controlX+1...7) {
+			if (_grid[controlY * 8 + i] != 0) {
+				return(i);
+			}
+		}
 		return(7);
 	}
 	

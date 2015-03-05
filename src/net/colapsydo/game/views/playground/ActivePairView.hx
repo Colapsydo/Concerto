@@ -21,7 +21,7 @@ class ActivePairView extends Sprite
 	var _targetRotation:Int;
 	var _actualRotation:Int;
 	var _rotationInProgress:Bool;
-	var _trigo:Bool;
+	var _trigo:Int;
 	
 	var _masterPreview:NotePreview;
 	var _slavePreview:NotePreview;
@@ -78,7 +78,7 @@ class ActivePairView extends Sprite
 	}
 	
 	private function rotationHandler(e:Event):Void {
-		_actualRotation += _trigo==true ? -15 : 15;
+		_actualRotation += _trigo<0 ? -15 : 15;
 		_slaveContainer.rotation = _actualRotation;
 		if (_targetRotation ==_actualRotation) {
 			_slaveContainer.rotation = _actualRotation = _targetRotation;
@@ -132,7 +132,7 @@ class ActivePairView extends Sprite
 		if (_rotationInProgress == false && _activePair.getRotationOccured() == true) {
 			_actualRotation = Std.int(_slaveContainer.rotation);
 			_trigo = _activePair.getTrigo();
-			_targetRotation =  _trigo == true? Std.int(_actualRotation - 90):Std.int(_actualRotation + 90);
+			_targetRotation =  Std.int(_actualRotation + _trigo * 90);
 			_activePair.rotationTreated();
 			_rotationInProgress = true;
 			addEventListener(Event.ENTER_FRAME, rotationHandler);
