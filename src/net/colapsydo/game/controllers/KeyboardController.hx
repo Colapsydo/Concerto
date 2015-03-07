@@ -17,6 +17,8 @@ class KeyboardController
 	var _rotationAT:Bool;
 	var _sideTimer:Int;
 	var _working:Bool;
+	var _rotTtimer:Float;
+	var _rotATtimer:Float;
 	
 	
 	public function new(activePair:ActivePair) {
@@ -48,12 +50,26 @@ class KeyboardController
 			case 87: //w
 				if (_rotationT == false) {
 					_rotationT = true;
-					if (_working == true) { _activePair.rotate(true); }
+					if (_working == true) { 
+						if (_rotTtimer < 15) {
+							_activePair.rotate(true,true); 
+						}else {
+							_activePair.rotate(true);
+							_rotTtimer = 0;
+						}
+					}
 				}
 			case 88: //x
 				if (_rotationAT == false) {
 					_rotationAT = true;
-					if (_working == true) { _activePair.rotate(false); }
+					if (_working == true) { 
+						if (_rotATtimer < 15) {
+							_activePair.rotate(false,true);  
+						}else {
+							_activePair.rotate(false);
+							_rotATtimer = 0;
+						}
+					}
 				}
 			default:
 		}
@@ -69,7 +85,7 @@ class KeyboardController
 				_down = false;
 				_activePair.upSpeed(_down);
 			case 87: //w
-				_rotationT = false;
+				_rotationT = false;				
 			case 88: //x
 				_rotationAT = false;
 			default:
@@ -81,6 +97,8 @@ class KeyboardController
 	}
 	
 	public function update():Void {
+		_rotTtimer++;
+		_rotATtimer++;
 		if (_left == true || _right==true) {
 			if (--_sideTimer == 0) {
 				_sideTimer = 2;

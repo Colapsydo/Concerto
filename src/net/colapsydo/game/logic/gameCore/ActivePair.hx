@@ -183,44 +183,46 @@ class ActivePair extends EventDispatcher
 		}
 	}
 	
-	public function rotate(trigo:Bool):Void{
-	//rotation
-		_trigo = trigo == true ? -1 : 1;
-	//futur destination	
-		switch(_slavePos) {
-			case LEFT:
-				_slavePos = trigo == true ? BOTTOM : TOP;
-			case TOP:
-				if (_blocked == true) {
-					_trigo *= 2;
-					_slavePos = BOTTOM;
-				}else {
-					_slavePos = trigo == true ? LEFT : RIGHT;
-				}
-			case RIGHT:
-				_slavePos = trigo == true ? TOP : BOTTOM;
-			case BOTTOM:
-				if (_blocked == true) {
-					_trigo *= 2;
-					_slavePos = TOP;
-				}else {
-					_slavePos = trigo == true ? RIGHT : LEFT;	
-				}
-				
-		}
-	//define new sideLimits
-		defineSideLimits();
-		
-	//check if limit are violated
-		if (_masterAbsPosX <= _leftSideLimit) { _masterAbsPosX = _leftSideLimit + 1; }
-		if (_masterAbsPosX >= _rightSideLimit) { _masterAbsPosX = _rightSideLimit - 1; }
-		
-	//check if rotation is allowed by sideLimits (special case of monoColumn)
-		_rotationOccured = true;
-		
-	//Redefine FinalPos and Check for conflict	
-		defineFinalPos();
-		checkFinalPosCrossed();
+	public function rotate(trigo:Bool, double:Bool=false):Void{
+		if (_rotationOccured ==false && (_blocked == false || double == true)) {
+		//rotation
+			_trigo = trigo == true ? -1 : 1;
+		//futur destination	
+			switch(_slavePos) {
+				case LEFT:
+					_slavePos = trigo == true ? BOTTOM : TOP;
+				case TOP:
+					if (_blocked == true) {
+						_trigo *= 2;
+						_slavePos = BOTTOM;
+					}else {
+						_slavePos = trigo == true ? LEFT : RIGHT;
+					}
+				case RIGHT:
+					_slavePos = trigo == true ? TOP : BOTTOM;
+				case BOTTOM:
+					if (_blocked == true) {
+						_trigo *= 2;
+						_slavePos = TOP;
+					}else {
+						_slavePos = trigo == true ? RIGHT : LEFT;	
+					}
+					
+			}
+		//define new sideLimits
+			defineSideLimits();
+			
+		//check if limit are violated
+			if (_masterAbsPosX <= _leftSideLimit) { _masterAbsPosX = _leftSideLimit + 1; }
+			if (_masterAbsPosX >= _rightSideLimit) { _masterAbsPosX = _rightSideLimit - 1; }
+			
+		//check if rotation is allowed by sideLimits (special case of monoColumn)
+			_rotationOccured = true;
+			
+		//Redefine FinalPos and Check for conflict	
+			defineFinalPos();
+			checkFinalPosCrossed();
+		}	
 	}
 	
 	public function rotationTreated() { _rotationOccured = false; }

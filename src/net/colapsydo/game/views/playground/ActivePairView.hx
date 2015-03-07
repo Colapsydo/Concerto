@@ -84,6 +84,7 @@ class ActivePairView extends Sprite
 			_slaveContainer.rotation = _actualRotation = _targetRotation;
 			_rotationInProgress = false;
 			removeEventListener(Event.ENTER_FRAME, rotationHandler);
+			_activePair.rotationTreated();
 		}
 		_slaveNote.rotation = -_slaveContainer.rotation;
 	}
@@ -133,7 +134,6 @@ class ActivePairView extends Sprite
 			_actualRotation = Std.int(_slaveContainer.rotation);
 			_trigo = _activePair.getTrigo();
 			_targetRotation =  Std.int(_actualRotation + _trigo * 90);
-			_activePair.rotationTreated();
 			_rotationInProgress = true;
 			addEventListener(Event.ENTER_FRAME, rotationHandler);
 		}
