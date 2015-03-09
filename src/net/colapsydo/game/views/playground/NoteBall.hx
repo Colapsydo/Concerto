@@ -21,6 +21,8 @@ class NoteBall extends Sprite
 	var _targetY:Float;
 	var _dir:Int = 1;
 	
+	var _fallingVel:Float;
+	
 	var _type:Int;
 	var _state:NoteState;
 	
@@ -49,14 +51,15 @@ class NoteBall extends Sprite
 			removeEventListener(Event.ENTER_FRAME, fallingHandler);
 			dispatchEvent(new Event(NoteBall.LANDED));
 		}else {
-			_posY += _size * .3;
+			_posY += _size * _fallingVel;
+			_fallingVel += _fallingVel < .5 ? 0.0234375 : 0;
 		}
 		this.y = _posY;
 	}
 	
 	private function bouncingHandler(e:Event):Void {
 		var scaleY = this.scaleY;
-		scaleY -= _dir * .08;
+		scaleY -= _dir * .075;
 		this.scaleX += _dir * .04;
 		if (scaleY <= 0.4) {
 			scaleY = .4;
@@ -114,7 +117,7 @@ class NoteBall extends Sprite
 		switch(_state) {
 			case IDLE:
 			case FALLING:
-				//trace(_targetY, _posY);
+				_fallingVel = 0.0625;
 				addEventListener(Event.ENTER_FRAME, fallingHandler);
 			case BOUNCING:
 				_dir = 1;

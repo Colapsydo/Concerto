@@ -53,7 +53,7 @@ class ActivePair extends EventDispatcher
 	
 	function init():Void {
 		_masterAbsPosX = 2;
-		_descentVelocity = 0.02;
+		_descentVelocity = 0.025;
 		_masterPosY=15.5;
 		_slavePos = TOP;
 		_blocked = false;
@@ -235,9 +235,9 @@ class ActivePair extends EventDispatcher
 	
 	public function upSpeed(down:Bool):Void {
 		if (down == true) {
-			_descentVelocity = 0.35;
+			_descentVelocity = 0.5;
 		}else {
-			_descentVelocity = 0.02;
+			_descentVelocity = 0.025;
 		}
 	}
 	

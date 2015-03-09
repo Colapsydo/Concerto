@@ -30,15 +30,21 @@ class KeyboardController
 			case 37: //left
 				if (_left == false) {
 					_left = true;
-					_sideTimer = 15;
-					if (_working == true) { _activePair.horizontalMove( -1 ); }
+					_sideTimer = 10;
+					if (_working == true) { 
+						_activePair.horizontalMove( -1 ); 
+						_activePair.upSpeed(false);
+					}
 				}
 				
 			case 39: //right
 				if (_right == false) {
 					_right = true;
-					_sideTimer = 15;
-					if (_working == true) { _activePair.horizontalMove( 1 ); }
+					_sideTimer = 10;
+					if (_working == true) { 
+						_activePair.horizontalMove( 1 ); 
+						_activePair.upSpeed(false);
+					}
 				}
 				
 			case 40: //down
@@ -79,8 +85,10 @@ class KeyboardController
 		switch(Std.int(e.keyCode)) {
 			case 37: //left
 				_left = false;
+				_activePair.upSpeed(_down);
 			case 39: //right
 				_right = false;
+				_activePair.upSpeed(_down);
 			case 40: //down
 				_down = false;
 				_activePair.upSpeed(_down);
@@ -102,6 +110,7 @@ class KeyboardController
 		if (_left == true || _right==true) {
 			if (--_sideTimer == 0) {
 				_sideTimer = 2;
+				_activePair.upSpeed(_down);
 				if (_left == true) { _activePair.horizontalMove( -1 ); }
 				if (_right == true) { _activePair.horizontalMove( 1 ); }
 			}

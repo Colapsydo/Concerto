@@ -80,7 +80,6 @@ class ActivePairView extends Sprite
 	private function startRotationHandler(e:Event):Void {
 		_trigo = _activePair.getTrigo();
 		_targetRotation +=  _trigo * 90;
-		trace(_slaveContainer.rotation, _actualRotation, _targetRotation);
 		
 		if (_rotationInProgress == false) {
 			_rotationInProgress = true;
