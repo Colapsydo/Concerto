@@ -59,10 +59,10 @@ class ActivePairView extends Sprite
 		_slavePreview.visible = false;
 		_pairSprite.visible = false;
 		
+		_activePair.addEventListener(ActivePair.ROTATION, startRotationHandler);
 		_activePair.addEventListener(ActivePair.FINALPOSCHANGE, finalPosChangeHandler);
 		_activePair.addEventListener(ActivePair.PLAYED, playedHandler);
 	}
-
 	
 	//HANDLERS
 	
@@ -77,15 +77,32 @@ class ActivePairView extends Sprite
 		dispatchEvent(e);
 	}
 	
-	private function rotationHandler(e:Event):Void {
-		_actualRotation += _trigo<0 ? -15 : 15;
-		_slaveContainer.rotation = _actualRotation;
-		if (_targetRotation ==_actualRotation) {
-			_slaveContainer.rotation = _actualRotation = _targetRotation;
+	private function startRotationHandler(e:Event):Void {
+		_trigo = _activePair.getTrigo();
+		_targetRotation +=  _trigo * 90;
+		trace(_slaveContainer.rotation, _actualRotation, _targetRotation);
+		
+		if (_rotationInProgress == false) {
+			_rotationInProgress = true;
+			addEventListener(Event.ENTER_FRAME, rotationHandler);
+		}
+		
+		if (_actualRotation == _targetRotation) {
+			_targetRotation = _actualRotation = _actualRotation % 360;
 			_rotationInProgress = false;
 			removeEventListener(Event.ENTER_FRAME, rotationHandler);
-			_activePair.rotationTreated();
 		}
+	}
+	
+	private function rotationHandler(e:Event):Void {
+		//_actualRotation += _trigo < 0? -15:15;
+		_actualRotation += _trigo*15;
+		if (_targetRotation ==_actualRotation) {
+			_targetRotation = _actualRotation = _actualRotation % 360;
+			_rotationInProgress = false;
+			removeEventListener(Event.ENTER_FRAME, rotationHandler);
+		}
+		_slaveContainer.rotation = _actualRotation;
 		_slaveNote.rotation = -_slaveContainer.rotation;
 	}
 	
@@ -119,6 +136,7 @@ class ActivePairView extends Sprite
 		_slavePreview.convert(type);
 		
 		_slaveContainer.rotation = 270;
+		_targetRotation = _actualRotation = Std.int(_slaveContainer.rotation);
 		_slaveNote.rotation = -_slaveContainer.rotation;
 		_pairSprite.x = (_activePair.getMasterPosX()+.5) * _ray;
 		_pairSprite.y = (15 - _activePair.getMasterPosY()) * _ray;
@@ -130,12 +148,13 @@ class ActivePairView extends Sprite
 		_pairSprite.x = (_activePair.getMasterPosX()+.5) * _ray;
 		_pairSprite.y = (15 - _activePair.getMasterPosY()) * _ray;
 		
-		if (_rotationInProgress == false && _activePair.getRotationOccured() == true) {
-			_actualRotation = Std.int(_slaveContainer.rotation);
-			_trigo = _activePair.getTrigo();
-			_targetRotation =  Std.int(_actualRotation + _trigo * 90);
-			_rotationInProgress = true;
-			addEventListener(Event.ENTER_FRAME, rotationHandler);
-		}
+		//if (_rotationInProgress == false && _activePair.getRotationOccured() == true) {
+			////_actualRotation = Std.int(_slaveContainer.rotation);
+			//_trigo = _activePair.getTrigo();
+			//_targetRotation +=  _trigo * 90;
+			//trace(_slaveContainer.rotation, _actualRotation, _targetRotation);
+			//_rotationInProgress = true;
+			//addEventListener(Event.ENTER_FRAME, rotationHandler);
+		//}
 	}
 }

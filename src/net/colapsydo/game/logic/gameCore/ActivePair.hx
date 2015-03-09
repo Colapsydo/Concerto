@@ -33,8 +33,6 @@ class ActivePair extends EventDispatcher
 	
 	var _descentVelocity:Float;
 	var _trigo:Int;
-	var _rotationOccured:Bool;
-	var _quarterNum:Int;
 	
 	var _leftSideLimit:Int;
 	var _rightSideLimit:Int;
@@ -42,6 +40,7 @@ class ActivePair extends EventDispatcher
 	
 	var _freeTime:Float;
 	
+	static public inline var ROTATION:String = "rotation";
 	static public inline var FINALPOSCHANGE:String = "finalposchange";
 	static public inline var PLAYED:String = "played";
 	
@@ -184,7 +183,7 @@ class ActivePair extends EventDispatcher
 	}
 	
 	public function rotate(trigo:Bool, double:Bool=false):Void{
-		if (_rotationOccured ==false && (_blocked == false || double == true)) {
+		if (_blocked == false || double == true) {
 		//rotation
 			_trigo = trigo == true ? -1 : 1;
 		//futur destination	
@@ -216,16 +215,13 @@ class ActivePair extends EventDispatcher
 			if (_masterAbsPosX <= _leftSideLimit) { _masterAbsPosX = _leftSideLimit + 1; }
 			if (_masterAbsPosX >= _rightSideLimit) { _masterAbsPosX = _rightSideLimit - 1; }
 			
-		//check if rotation is allowed by sideLimits (special case of monoColumn)
-			_rotationOccured = true;
-			
 		//Redefine FinalPos and Check for conflict	
 			defineFinalPos();
 			checkFinalPosCrossed();
+			
+			dispatchEvent(new Event(ActivePair.ROTATION));
 		}	
 	}
-	
-	public function rotationTreated() { _rotationOccured = false; }
 	
 	public function horizontalMove(direction:Int):Void{
 		var posXtest:Int = _masterAbsPosX + direction;
@@ -256,7 +252,6 @@ class ActivePair extends EventDispatcher
 	public function getSlavePos():SlavePosition { return(_slavePos); }
 	public function getSlavePosX():Int { return (_slaveAbsPosX);}
 	public function getSlaveFinalPos():Int { return(_slaveFinalPos); }
-	public function getRotationOccured():Bool { return(_rotationOccured); }
 	public function getTrigo():Int { return(_trigo);}
 	
 	
