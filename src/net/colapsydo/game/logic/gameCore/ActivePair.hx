@@ -65,14 +65,21 @@ class ActivePair extends EventDispatcher
 		switch(_slavePos) {
 			case LEFT:
 				_slaveFinalPos = _grid.getFirstEmptyCell(_masterAbsPosX - 1);
+				_slaveAbsPosX = _masterAbsPosX -1;
 			case TOP:
-				_slaveFinalPos = _masterFinalPos+1;
+				_slaveFinalPos = _masterFinalPos + 1;
+				_slaveAbsPosX = _masterAbsPosX ;
 			case RIGHT:
 				_slaveFinalPos = _grid.getFirstEmptyCell(_masterAbsPosX +1);
+				_slaveAbsPosX = _masterAbsPosX + 1;
 			case BOTTOM:
 				_slaveFinalPos = _masterFinalPos;
-				_masterFinalPos = _slaveFinalPos + 1;	
+				_masterFinalPos = _slaveFinalPos + 1;
+				_slaveAbsPosX = _masterAbsPosX ;
 		}
+		
+		_grid.preScan(_masterFinalPos * 8 + _masterAbsPosX, _masterNote, _slaveFinalPos * 8 + _slaveAbsPosX, _slaveNote);
+		
 		dispatchEvent(new Event(ActivePair.FINALPOSCHANGE));
 	}
 	
@@ -106,6 +113,7 @@ class ActivePair extends EventDispatcher
 				case RIGHT:
 					_slaveAbsPosX = _masterAbsPosX + 1;
 			}
+			
 			_grid.addNote(_masterNote, _masterAbsPosX, _masterFinalPos);
 			_grid.addNote(_slaveNote, _slaveAbsPosX, _slaveFinalPos);
 			

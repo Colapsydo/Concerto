@@ -23,5 +23,6 @@
 	
 	<!-- optimize output
 	<haxeflag name="-dce full" /> -->
+	<haxeflag name="-D advanced-telemetry"/>
 	
 </project>

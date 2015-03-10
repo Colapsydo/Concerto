@@ -11,6 +11,7 @@ enum NoteState {
 	IDLE;
 	FALLING;
 	BOUNCING;
+	BLINKING;
 }
  
 class NoteBall extends Sprite
@@ -21,10 +22,14 @@ class NoteBall extends Sprite
 	var _targetY:Float;
 	var _dir:Int = 1;
 	
+	
 	var _fallingVel:Float;
 	
 	var _type:Int;
 	var _state:NoteState;
+	
+	static var _blinkValue:Float;
+	static var _blinkDir:Int;
 	
 	static public inline var LANDED:String = "landed";
 	static public inline var BOUNCED:String = "bounced";
@@ -75,6 +80,18 @@ class NoteBall extends Sprite
 		this.scaleY = scaleY;
 	}
 	
+	private function blinkingHandler(e:Event):Void {
+		this.alpha = _blinkValue;
+	}
+	
+	static private function blinkHandler(e:Event):Void {
+		_blinkValue+= _blinkDir * .025;
+		if (_blinkValue < .5 || _blinkValue>1) {
+			_blinkValue = _blinkValue < .5 ? .5 : 1;
+			_blinkDir *= -1;
+		}
+	}
+	
 	//PRIVATE FUNCTIONS
 	
 	function draw(grid:Bool=false) {
@@ -116,13 +133,30 @@ class NoteBall extends Sprite
 		_state = state;
 		switch(_state) {
 			case IDLE:
+				removeEventListener(Event.ENTER_FRAME, blinkingHandler);
+				this.alpha = 1;				
 			case FALLING:
 				_fallingVel = 0.0625;
 				addEventListener(Event.ENTER_FRAME, fallingHandler);
 			case BOUNCING:
 				_dir = 1;
 				addEventListener(Event.ENTER_FRAME, bouncingHandler);
+			case BLINKING:
+				if (this.alpha == 1) {
+					this.alpha = _blinkValue;
+					addEventListener(Event.ENTER_FRAME, blinkingHandler);
+				}
 		}
+	}
+	
+	public function startBlinking():Void {
+		_blinkValue = 1;
+		_blinkDir = 1;
+		addEventListener(Event.ENTER_FRAME, blinkHandler);
+	}
+	
+	public function stopBlinking():Void{
+		removeEventListener(Event.ENTER_FRAME, blinkHandler);
 	}
 	
 	static public function setSize(step:Int):Void{

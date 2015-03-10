@@ -7,6 +7,7 @@ import openfl.display.Shape;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.Vector;
+import net.colapsydo.game.views.playground.NoteBall.NoteState;
 
 /**
  * ...
@@ -18,6 +19,7 @@ class GridView extends Sprite
 	var _gridData:GameGrid;
 	var _grid:Vector<Int>;
 	var _activePair:ActivePair;
+	var _solutions:Vector<Vector<Int>>;
 	
 	var _noteballPool:NoteballPool;
 	var _gridNote:Vector<Vector<NoteBall>>;
@@ -94,13 +96,12 @@ class GridView extends Sprite
 		addChild(_activePairView);
 		_activePairView.mask = _mask;
 		_activePairView.addEventListener(ActivePair.PLAYED, playedHandler);
+		_activePair.addEventListener(ActivePair.FINALPOSCHANGE, finalPosChangeHandler);
 	}
 	
 	//HANDLERS
 	
 	private function playedHandler(e:Event):Void {
-		//insert master
-		addNoteToGridView(_activePair.getMasterNote(), _activePair.getMasterPosX(), _activePair.getMasterFinalPos(), _activePair.getMasterPosY());
 		var slavePosY:Float;
 		switch(_activePair.getSlavePos()) {
 			case LEFT, RIGHT:
@@ -110,7 +111,37 @@ class GridView extends Sprite
 			case BOTTOM:
 				slavePosY = _activePair.getMasterPosY()-1;
 		}
-		addNoteToGridView(_activePair.getSlaveNote(), _activePair.getSlavePosX(), _activePair.getSlaveFinalPos(), slavePosY);
+		if (_activePair.getMasterFinalPos() < _activePair.getSlaveFinalPos()) {
+			//insert master first
+			addNoteToGridView(_activePair.getMasterNote(), _activePair.getMasterPosX(), _activePair.getMasterFinalPos(), _activePair.getMasterPosY());
+			addNoteToGridView(_activePair.getSlaveNote(), _activePair.getSlavePosX(), _activePair.getSlaveFinalPos(), slavePosY);
+		}else {
+			//insert slave first
+			addNoteToGridView(_activePair.getSlaveNote(), _activePair.getSlavePosX(), _activePair.getSlaveFinalPos(), slavePosY);
+			addNoteToGridView(_activePair.getMasterNote(), _activePair.getMasterPosX(), _activePair.getMasterFinalPos(), _activePair.getMasterPosY());
+		}
+		gridIdle();
+		
+	}
+	
+	private function finalPosChangeHandler(e:Event):Void {
+		gridIdle();
+		//check for solutions
+		_solutions = _gridData.getSolutions();
+		//light solutions notes
+		var indexX:Int;
+		var indexY:Int;
+		for (i in 0..._solutions.length) {
+			for (j in 0..._solutions[i].length) {
+				indexX = _solutions[i][j];
+				indexY = Std.int(indexX / 8)-1;
+				indexX %= 8;
+				indexX--;
+				if (_gridNote[indexX].length > indexY) {
+					_gridNote[indexX][indexY].changeState(BLINKING);
+				}
+			}
+		}
 	}
 	
 	private function landedHandler(e:Event):Void {
@@ -140,6 +171,15 @@ class GridView extends Sprite
 		_gridNote[indexX - 1].push(noteBall);
 		noteBall.changeState(FALLING);
 		_gravityNum++;
+	}
+	
+	function gridIdle():Void{
+		
+		for (i in 0..._gridNote.length) {
+			for (j in 0..._gridNote[i].length) {
+				_gridNote[i][j].changeState(IDLE);
+			}
+		}
 	}
 	
 	//use of noteballPool

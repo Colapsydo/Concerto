@@ -24,7 +24,7 @@
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="openfl=2.2.7&#xA;lime=2.1.2&#xA;actuate=1.8.2&#xA;tools=2.1.2&#xA;no-compilation&#xA;openfl-flash&#xA;web" />
+    <option directives="openfl=2.2.7&#xA;lime=2.1.2&#xA;actuate=1.8.2&#xA;tools=2.1.2&#xA;no-compilation&#xA;openfl-flash&#xA;web&#xA;advanced-telemetry" />
     <option flashStrict="False" />
     <option noInlineOnDebug="False" />
     <option mainClass="ApplicationMain" />

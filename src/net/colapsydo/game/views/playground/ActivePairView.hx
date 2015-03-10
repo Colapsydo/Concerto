@@ -49,6 +49,7 @@ class ActivePairView extends Sprite
 		
 		_masterNote = new NoteBall(1);
 		_pairSprite.addChild(_masterNote);
+		_masterNote.startBlinking();
 		_slaveContainer = new Sprite();
 		_pairSprite.addChild(_slaveContainer);
 		_slaveNote = new NoteBall(1);
@@ -156,4 +157,11 @@ class ActivePairView extends Sprite
 			//addEventListener(Event.ENTER_FRAME, rotationHandler);
 		//}
 	}
+	
+	//DISPOSE
+	private function dispose():Void {
+		//YOU HAVE TO KILL THE ENTER FRAME EVENTLISTENER FOR BLINKING
+		_masterNote.stopBlinking();
+	}
+	
 }

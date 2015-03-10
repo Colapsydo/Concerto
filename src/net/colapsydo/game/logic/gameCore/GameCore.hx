@@ -52,6 +52,9 @@ class GameCore extends Sprite
 		removeEventListener(Event.ENTER_FRAME, efHandler);
 		_activePair.removeEventListener(ActivePair.PLAYED, playedHandler);
 		_state = GRAVITY;
+		
+		_grid.lookForSolutions();
+		
 		dispatchEvent(new Event(GameCore.UPDATE));
 	}
 	
