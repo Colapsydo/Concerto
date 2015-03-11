@@ -88,6 +88,30 @@ class GameGrid
 		}
 	}
 	
+	function applyGravity():Void{
+		var stepper:Int;
+		var index:Int; 
+		for (i in 1...7) {
+			stepper = 1;
+			for (j in 1...16) {
+				index = i + j * 8;
+				if (_grid[index] != 0) {
+					if (j != stepper) {
+						gridSwap(index, i + stepper * 8);	
+					}
+					stepper++;
+				}
+			}
+		}
+	}
+	
+	function gridSwap(index1:Int, index2:Int):Void {
+		var value1:Int = _grid[index1];
+		var value2:Int = _grid[index2];
+		_grid[index2] = value1;
+		_grid[index1] = value2;
+	}
+	
 	//PUBLIC FUNCTIONS
 	
 	public function defineEmptyCells():Void{
@@ -140,6 +164,18 @@ class GameGrid
 	public function lookForSolutions():Void {
 		scanGrid();
 	}
+	
+	public function cleanSolutions():Void{
+		//scan solutions and remove them from grid
+		for (i in 0..._solutions.length) {
+			for (x in _solutions[i]) {
+				_grid[x] = 0;
+			}
+		}
+		applyGravity();
+	}
+	
+	public function hasSolutions():Bool { return(_solutions.length > 0);}
 	
 	public function addNote(type:Int, posX:Int, posY:Int) {
 		_grid[posY * 8 + posX] = type;

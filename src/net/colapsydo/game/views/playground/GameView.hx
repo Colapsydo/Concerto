@@ -62,7 +62,9 @@ class GameView extends Sprite
 			case GRAVITY:
 				_controller.working(false);
 				removeEventListener(Event.ENTER_FRAME, playHandler);
+				_grid.applyGravity();
 			case CHAIN:
+				_grid.removeSolutions();
 			
 		}
 	}

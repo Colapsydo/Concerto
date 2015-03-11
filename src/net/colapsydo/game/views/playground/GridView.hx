@@ -15,6 +15,7 @@ import net.colapsydo.game.views.playground.NoteBall.NoteState;
  */
 class GridView extends Sprite
 {
+	
 	var _gameCore:GameCore;
 	var _gridData:GameGrid;
 	var _grid:Vector<Int>;
@@ -24,6 +25,7 @@ class GridView extends Sprite
 	var _noteballPool:NoteballPool;
 	var _gridNote:Vector<Vector<NoteBall>>;
 	var _gravityNum:Int;
+	var _destructionNum:Int;
 	
 	var _background:Shape;
 	var _noteBallsContainer:Sprite;
@@ -85,6 +87,7 @@ class GridView extends Sprite
 		addChild(_noteBallsContainer);
 		_noteBallsContainer.addEventListener(NoteBall.LANDED, landedHandler, true);
 		_noteBallsContainer.addEventListener(NoteBall.BOUNCED, bouncedHandler, true);
+		_noteBallsContainer.addEventListener(NoteBall.DESTROYED, destructionHandler, true);
 		
 		_mask = new Shape();
 		_mask.graphics.beginFill(0xFFFFFF);
@@ -120,8 +123,7 @@ class GridView extends Sprite
 			addNoteToGridView(_activePair.getSlaveNote(), _activePair.getSlavePosX(), _activePair.getSlaveFinalPos(), slavePosY);
 			addNoteToGridView(_activePair.getMasterNote(), _activePair.getMasterPosX(), _activePair.getMasterFinalPos(), _activePair.getMasterPosY());
 		}
-		gridIdle();
-		
+		gridIdle();	
 	}
 	
 	private function finalPosChangeHandler(e:Event):Void {
@@ -153,9 +155,24 @@ class GridView extends Sprite
 	
 	private function bouncedHandler(e:Event):Void {
 		_gravityNum--;
-		//trace(_gravityNum);
+		//trace(_gravityNum, " notes to fall");
 		if (_gravityNum == 0) {
 			_gameCore.allLanded();
+		}
+	}
+	
+	private function destructionHandler(e:Event):Void {
+		//use of noteballPool
+		var noteball:NoteBall = cast(e.target, NoteBall);
+		var indexX:Int = noteball.getIndexX()-1;
+		var indexY:Int = _gridNote[indexX].lastIndexOf(noteball);
+		_noteBallsContainer.removeChild(noteball);
+		_noteballPool.discardNoteball(_gridNote[indexX].splice(indexY, 1)[0]);
+		
+		_destructionNum--;
+		
+		if (_destructionNum == 0) {
+			_gameCore.destructionComplete();
 		}
 	}
 	
@@ -163,18 +180,20 @@ class GridView extends Sprite
 	
 	function addNoteToGridView(type:Int, indexX:Int, indexY:Int, absY:Float):Void {
 		var noteBall:NoteBall = _noteballPool.getNoteball();
+		noteBall.alpha = 1;
 		_noteBallsContainer.addChild(noteBall);
 		noteBall.convert(type,true);
 		noteBall.setIndexX(indexX);
 		noteBall.setIndexY(indexY);
 		noteBall.setPosY(absY);
 		_gridNote[indexX - 1].push(noteBall);
+		
 		noteBall.changeState(FALLING);
 		_gravityNum++;
+		
 	}
 	
-	function gridIdle():Void{
-		
+	function gridIdle():Void{		
 		for (i in 0..._gridNote.length) {
 			for (j in 0..._gridNote[i].length) {
 				_gridNote[i][j].changeState(IDLE);
@@ -196,6 +215,54 @@ class GridView extends Sprite
 	
 	public function update() {
 		_activePairView.update();
+	}
+	
+	public function applyGravity():Void {
+		for (i in 0..._gridNote.length) {
+			for (j in 0..._gridNote[i].length) {
+				if (_gridNote[i][j].getIndexY() != j + 1) { //if noteball not at its position
+					_gridNote[i][j].setIndexY(j + 1);
+					_gridNote[i][j].changeState(FALLING);
+					_gravityNum++;
+				}
+			}
+		}
+		if (_gravityNum == 0) {
+			_gameCore.allLanded();
+		}
+	}
+	
+	public function removeSolutions():Void{
+		_solutions = _gridData.getSolutions();
+		var indexX:Int;
+		var indexY:Int;
+		//var targetX:Int; //for transformation animations
+		//var targetY:Int;
+		for (i in 0..._solutions.length) {
+			for (j in 0..._solutions[i].length) {
+				indexX = _solutions[i][j];
+				indexY = Std.int(indexX / 8)-1;
+				indexX %= 8;
+				indexX--;
+				//if (j == 0) {
+					//_gridNote[indexX][indexY].changeState(TRANSFORMING);
+				//}else {
+					//_gridNote[indexX][indexY].setTarget(targetX, targetY);
+					_gridNote[indexX][indexY].changeState(EXPLODING);
+					_destructionNum++;
+				//}
+			}
+		}
+		
+		for (i in 0..._solutions.length) {
+			for (j in 0..._solutions[i].length) {
+				indexX = _solutions[i][j];
+				indexY = Std.int(indexX / 8)-1;
+				indexX %= 8;
+				indexX--;
+				
+			}
+		}
 	}
 	
 	//GETTERS && SETTERS

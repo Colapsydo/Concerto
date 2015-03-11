@@ -47,13 +47,13 @@ class GameCore extends Sprite
 		_activePair.update();
 	}
 	
-	private function playedHandler(e:Event):Void {
+	private function playedHandler(e:Event):Void {	
 		//Send event to views for gravity
 		removeEventListener(Event.ENTER_FRAME, efHandler);
 		_activePair.removeEventListener(ActivePair.PLAYED, playedHandler);
-		_state = GRAVITY;
 		
 		_grid.lookForSolutions();
+		_state = GRAVITY;
 		
 		dispatchEvent(new Event(GameCore.UPDATE));
 	}
@@ -74,13 +74,21 @@ class GameCore extends Sprite
 	}
 	
 	public function allLanded():Void {
-		//if solutions then chain state
-		//_state = CHAIN;
-		//else
-		_grid.defineEmptyCells();
-		_activePair.newPair();
-		_state = DISTRIBUTION;
+		if (_grid.hasSolutions() == true) {
+			_grid.cleanSolutions();
+			_state = CHAIN;
+		}else {
+			_grid.defineEmptyCells();
+			_activePair.newPair();
+			_state = DISTRIBUTION;
+		}
 		dispatchEvent(new Event(GameCore.UPDATE));	
+	}
+	
+	public function destructionComplete():Void{
+		_grid.lookForSolutions();
+		_state = GRAVITY;
+		dispatchEvent(new Event(GameCore.UPDATE));
 	}
 	
 	//GETTERS && SETTERS
@@ -89,5 +97,4 @@ class GameCore extends Sprite
 	public function getDistribution():Distribution { return(_distribution); }
 	public function getActivePair():ActivePair { return(_activePair);}
 	public function getGameState():GameState { return(_state); }
-	
 }

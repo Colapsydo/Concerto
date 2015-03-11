@@ -12,17 +12,18 @@ enum NoteState {
 	FALLING;
 	BOUNCING;
 	BLINKING;
+	TRANSFORMING;
+	EXPLODING;
 }
  
 class NoteBall extends Sprite
 {
-	var _indexX:Int;
-	var _indexY:Int;
-	var _posY:Float;
-	var _targetY:Float;
+	var _indexX:Int; //final X Index in Datagrid
+	var _indexY:Int; //final Y index in Datagrid
+	var _posY:Float; //Actual Pos Y on grid view
+	var _targetY:Float;  //Target Pos Y on grid view
 	var _dir:Int = 1;
-	
-	
+		
 	var _fallingVel:Float;
 	
 	var _type:Int;
@@ -33,6 +34,7 @@ class NoteBall extends Sprite
 	
 	static public inline var LANDED:String = "landed";
 	static public inline var BOUNCED:String = "bounced";
+	static public inline var DESTROYED:String = "destroyed";
 	
 	static var _size:Float;
 	
@@ -78,6 +80,14 @@ class NoteBall extends Sprite
 		}
 		
 		this.scaleY = scaleY;
+	}
+	
+	private function explodingHandler(e:Event):Void {
+		this.alpha -= 0.05;
+		if (this.alpha < 0) {
+			removeEventListener(Event.ENTER_FRAME, explodingHandler);
+			dispatchEvent(new Event(NoteBall.DESTROYED));
+		}
 	}
 	
 	private function blinkingHandler(e:Event):Void {
@@ -146,6 +156,10 @@ class NoteBall extends Sprite
 					this.alpha = _blinkValue;
 					addEventListener(Event.ENTER_FRAME, blinkingHandler);
 				}
+			case TRANSFORMING:
+			case EXPLODING:
+				addEventListener(Event.ENTER_FRAME, explodingHandler);
+				
 		}
 	}
 	
