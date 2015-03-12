@@ -62,7 +62,7 @@ class GridView extends Sprite
 		}
 		
 		_background = new Shape();
-		_background.graphics.beginFill(0xefefef);
+		_background.graphics.beginFill(0xEFEFEF);
 		_background.graphics.drawRect(0, 0, 8 * _step, 15 * _step);
 		_background.graphics.beginFill(0x555555);
 		_background.graphics.drawRect(0, 0, _step, 14 * _step);
@@ -70,14 +70,14 @@ class GridView extends Sprite
 		_background.graphics.drawRect(0, 14 * _step, 8 * _step, _step);
 		_background.graphics.endFill();
 		_background.graphics.lineStyle(1, 0);
-		for (i in 0...15) {
-			if (i < 9) {
-				_background.graphics.moveTo(i * _step, 0);
-				_background.graphics.lineTo(i * _step, 15*_step);
-			}
-			_background.graphics.moveTo(0, i*_step);
-			_background.graphics.lineTo(8 * _step, i*_step);
-		}
+		//for (i in 0...15) {
+			//if (i < 9) {
+				//_background.graphics.moveTo(i * _step, 0);
+				//_background.graphics.lineTo(i * _step, 15*_step);
+			//}
+			//_background.graphics.moveTo(0, i*_step);
+			//_background.graphics.lineTo(8 * _step, i*_step);
+		//}
 		_background.graphics.lineStyle(3, 0xFF0000);
 		_background.graphics.moveTo(0, 2*_step);
 		_background.graphics.lineTo(8 * _step, 2*_step);
@@ -244,25 +244,34 @@ class GridView extends Sprite
 				indexY = Std.int(indexX / 8)-1;
 				indexX %= 8;
 				indexX--;
-				//if (j == 0) {
+				if (j == 0) {
+					//TRANSFORMATION WITHOUT ANIMATION
+					var value:Int = _gridData.getValue(_solutions[i][j]);
+					if (value != 0) {
+						_gridNote[indexX][indexY].convert(value, true);
+					}else {
+						_gridNote[indexX][indexY].changeState(EXPLODING);
+						_destructionNum++;
+					}
+					//targetX = _gridNote[indexX][indexY].getIndexX();
+					//targetY = _gridNote[indexX][indexY].getIndexY();
 					//_gridNote[indexX][indexY].changeState(TRANSFORMING);
-				//}else {
+				}else {
 					//_gridNote[indexX][indexY].setTarget(targetX, targetY);
 					_gridNote[indexX][indexY].changeState(EXPLODING);
 					_destructionNum++;
-				//}
+				}
 			}
 		}
 		
-		for (i in 0..._solutions.length) {
-			for (j in 0..._solutions[i].length) {
-				indexX = _solutions[i][j];
-				indexY = Std.int(indexX / 8)-1;
-				indexX %= 8;
-				indexX--;
-				
-			}
-		}
+		//for (i in 0..._solutions.length) {
+			//for (j in 0..._solutions[i].length) {
+				//indexX = _solutions[i][j];
+				//indexY = Std.int(indexX / 8)-1;
+				//indexX %= 8;
+				//indexX--;
+			//}
+		//}
 	}
 	
 	//GETTERS && SETTERS

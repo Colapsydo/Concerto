@@ -13,6 +13,7 @@ class Distribution
 	var _randomGenerator:Rand;
 	
 	var _maxType:Int;
+	var _limitType:Int;
 	var _nextPairs:Vector<Int>;
 	
 	static var _noteNum:Int;
@@ -28,6 +29,7 @@ class Distribution
 		_randomGenerator = new Rand(_gameSeed);
 		
 		_maxType = 3;
+		_limitType = 6;
 		_nextPairs = new Vector<Int>();
 		for (i in 0...4) {
 			_nextPairs.push(uniformDistribution());
@@ -56,6 +58,18 @@ class Distribution
 			//dispatchEvent
 		}
 		return(note);
+	}
+	
+	public function transform(color:Int):Int {
+		trace("start color", color);
+		if (color < _limitType) {
+			color++;
+			_maxType = color > _maxType?color:_maxType;
+			trace("new color", color, "new max type", _maxType);
+			return(color);
+		}else {
+			return(0);
+		}
 	}
 	
 	//GETTERS && SETTERS

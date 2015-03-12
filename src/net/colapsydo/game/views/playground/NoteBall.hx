@@ -59,15 +59,15 @@ class NoteBall extends Sprite
 			dispatchEvent(new Event(NoteBall.LANDED));
 		}else {
 			_posY += _size * _fallingVel;
-			_fallingVel += _fallingVel < .5 ? 0.0234375 : 0;
+			_fallingVel += _fallingVel < .5 ? 0.035 : 0;
 		}
 		this.y = _posY;
 	}
 	
 	private function bouncingHandler(e:Event):Void {
 		var scaleY = this.scaleY;
-		scaleY -= _dir * .075;
-		this.scaleX += _dir * .04;
+		scaleY -= _dir * .11;
+		this.scaleX += _dir * .06;
 		if (scaleY <= 0.4) {
 			scaleY = .4;
 			_dir *= -1;
@@ -106,6 +106,7 @@ class NoteBall extends Sprite
 	
 	function draw(grid:Bool=false) {
 		this.graphics.clear();
+		this.graphics.lineStyle(2, 0x232323);
 		switch(_type) {
 			case 1:
 				this.graphics.beginFill(0xFF0000);
@@ -113,6 +114,12 @@ class NoteBall extends Sprite
 				this.graphics.beginFill(0x00FF00);
 			case 3:
 				this.graphics.beginFill(0x0000FF);
+			case 4:
+				this.graphics.beginFill(0xFFFF00);
+			case 5:
+				this.graphics.beginFill(0xFF00FF);
+			case 6:
+				this.graphics.beginFill(0x00FFFF);
 		}
 		if (grid == true) {
 			this.graphics.drawCircle(0, -_size, _size);
@@ -146,7 +153,7 @@ class NoteBall extends Sprite
 				removeEventListener(Event.ENTER_FRAME, blinkingHandler);
 				this.alpha = 1;				
 			case FALLING:
-				_fallingVel = 0.0625;
+				_fallingVel = 0.1;
 				addEventListener(Event.ENTER_FRAME, fallingHandler);
 			case BOUNCING:
 				_dir = 1;

@@ -8,12 +8,16 @@ import openfl.Vector;
  */
 class GameGrid
 {
+	var _distribution:Distribution;
+	
 	var _grid:Vector<Int>;
 	var _checked:Vector<Bool>;
+	var _fusion:Vector<Int>;
 	var _solutions:Vector<Vector<Int>>;
 	var _firstEmptyCells:Vector<Int>;
 	
-	public function new() {
+	public function new(distribution:Distribution) {
+		_distribution = distribution;
 		init();
 	}
 	
@@ -55,10 +59,20 @@ class GameGrid
 		//add the node to the group
 		group.push(index);
 		//scan neighbours
-		if (_grid[index - 1] == color && _checked[index-1]==false) {searchGroup(index - 1, color, group);}
-		if (_grid[index + 8] == color && _checked[index+8]==false) {searchGroup(index + 8, color, group);}
-		if (_grid[index + 1] == color && _checked[index+1]==false) {searchGroup(index + 1, color, group);}
-		if (_grid[index - 8] == color && _checked[index-8]==false) {searchGroup(index - 8, color, group);}
+		if (_grid[index - 1] == color && _checked[index - 1] == false) {
+			searchGroup(index - 1, color, group); 
+			//_fusion[index] += ;
+		}
+		if (_grid[index + 8] == color && _checked[index + 8] == false) {
+			searchGroup(index + 8, color, group);
+		}
+		if (_grid[index + 1] == color && _checked[index + 1] == false) {
+			searchGroup(index + 1, color, group);
+		}
+		if (_grid[index - 8] == color && _checked[index - 8] == false) {
+			searchGroup(index - 8, color, group);
+			
+		}
 	}
 	
 	function scanGrid():Void {
@@ -67,7 +81,8 @@ class GameGrid
 		
 		//reset node explored status
 		_checked = new Vector<Bool>();
-		_checked.length = _grid.length;
+		_fusion = new Vector<Int>();
+		_checked.length = _fusion.length = _grid.length;
 		
 		for (i in 8..._grid.length-8) {
 			//if node not explored
@@ -162,17 +177,20 @@ class GameGrid
 	}
 	
 	public function lookForSolutions():Void {
+		applyGravity();
 		scanGrid();
 	}
 	
 	public function cleanSolutions():Void{
+		//calculate Score here
+		
 		//scan solutions and remove them from grid
 		for (i in 0..._solutions.length) {
-			for (x in _solutions[i]) {
-				_grid[x] = 0;
+			_grid[_solutions[i][0]] = _distribution.transform(_grid[_solutions[i][0]]);
+			for (j in 1..._solutions[i].length) {
+				_grid[_solutions[i][j]]= 0;
 			}
 		}
-		applyGravity();
 	}
 	
 	public function hasSolutions():Bool { return(_solutions.length > 0);}
@@ -202,6 +220,7 @@ class GameGrid
 	//GETTERS && SETTERS
 	
 	public function getGrid():Vector<Int> { return(_grid); }
+	public function getValue(index:Int):Int { return(_grid[index]); }
 	public function getSolutions():Vector<Vector<Int>> { return(_solutions); }
 	public function getFirstEmptyCell(col:Int):Int { return(_firstEmptyCells[col]); }
 	

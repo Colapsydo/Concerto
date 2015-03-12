@@ -35,8 +35,8 @@ class GameCore extends Sprite
 	
 	function init(e:Event):Void{
 		removeEventListener(Event.ADDED_TO_STAGE, init);
-		_grid = new GameGrid();
 		_distribution = new Distribution();
+		_grid = new GameGrid(_distribution);
 		_activePair = new ActivePair(_grid, _distribution);
 		_state = DISTRIBUTION;
 	}
