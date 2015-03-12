@@ -70,8 +70,7 @@ class GameGrid
 			searchGroup(index + 1, color, group);
 		}
 		if (_grid[index - 8] == color && _checked[index - 8] == false) {
-			searchGroup(index - 8, color, group);
-			
+			searchGroup(index - 8, color, group);			
 		}
 	}
 	

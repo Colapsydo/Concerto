@@ -83,17 +83,18 @@ class GridView extends Sprite
 		_background.graphics.lineTo(8 * _step, 2*_step);
 		addChild(_background);
 		
-		_noteBallsContainer = new Sprite();
-		addChild(_noteBallsContainer);
-		_noteBallsContainer.addEventListener(NoteBall.LANDED, landedHandler, true);
-		_noteBallsContainer.addEventListener(NoteBall.BOUNCED, bouncedHandler, true);
-		_noteBallsContainer.addEventListener(NoteBall.DESTROYED, destructionHandler, true);
-		
 		_mask = new Shape();
-		_mask.graphics.beginFill(0xFFFFFF);
+		_mask.graphics.beginFill(0xFF0000);
 		_mask.graphics.drawRect(_step, 0, 6 * _step, 14 * _step);
 		_mask.graphics.endFill();
 		addChild(_mask);
+		
+		_noteBallsContainer = new Sprite();
+		addChild(_noteBallsContainer);
+		_noteBallsContainer.mask = _mask;
+		_noteBallsContainer.addEventListener(NoteBall.LANDED, landedHandler, true);
+		_noteBallsContainer.addEventListener(NoteBall.BOUNCED, bouncedHandler, true);
+		_noteBallsContainer.addEventListener(NoteBall.DESTROYED, destructionHandler, true);		
 		
 		_activePairView = new ActivePairView(_activePair);
 		addChild(_activePairView);
@@ -116,12 +117,12 @@ class GridView extends Sprite
 		}
 		if (_activePair.getMasterFinalPos() < _activePair.getSlaveFinalPos()) {
 			//insert master first
-			addNoteToGridView(_activePair.getMasterNote(), _activePair.getMasterPosX(), _activePair.getMasterFinalPos(), _activePair.getMasterPosY());
-			addNoteToGridView(_activePair.getSlaveNote(), _activePair.getSlavePosX(), _activePair.getSlaveFinalPos(), slavePosY);
+			addNoteToGridView(_activePair.getMasterNote(), _activePair.getMasterPosX(), _activePair.getMasterFinalPos(), _activePair.getMasterPosY(),_activePair.getDownVel());
+			addNoteToGridView(_activePair.getSlaveNote(), _activePair.getSlavePosX(), _activePair.getSlaveFinalPos(), slavePosY,_activePair.getDownVel());
 		}else {
 			//insert slave first
-			addNoteToGridView(_activePair.getSlaveNote(), _activePair.getSlavePosX(), _activePair.getSlaveFinalPos(), slavePosY);
-			addNoteToGridView(_activePair.getMasterNote(), _activePair.getMasterPosX(), _activePair.getMasterFinalPos(), _activePair.getMasterPosY());
+			addNoteToGridView(_activePair.getSlaveNote(), _activePair.getSlavePosX(), _activePair.getSlaveFinalPos(), slavePosY,_activePair.getDownVel());
+			addNoteToGridView(_activePair.getMasterNote(), _activePair.getMasterPosX(), _activePair.getMasterFinalPos(), _activePair.getMasterPosY(),_activePair.getDownVel());
 		}
 		gridIdle();	
 	}
@@ -148,8 +149,22 @@ class GridView extends Sprite
 	
 	private function landedHandler(e:Event):Void {
 		if (Std.is(e.target, NoteBall) == true) {
-			cast(e.target, NoteBall).changeState(BOUNCING);
-			//if indexY>1 bounce under if under are idle
+			var noteball:NoteBall = cast(e.target, NoteBall);
+			noteball.changeState(BOUNCING);
+			var indexY:Int = noteball.getIndexY()-1;
+			if (indexY > 0) {
+				var vel:Float = noteball.getVel();
+				var indexX:Int = noteball.getIndexX()-1;
+				while (indexY>0 && vel > 0.15) {
+					indexY--;
+					vel *= .6;
+					if (_gridNote[indexX][indexY].getState() == IDLE) {
+						_gridNote[indexX][indexY].setVel(vel);
+						_gridNote[indexX][indexY].changeState(BOUNCING);
+						_gravityNum++;
+					}					
+				}
+			}
 		}
 	}
 	
@@ -178,7 +193,7 @@ class GridView extends Sprite
 	
 	//PRIVATE FUNCTION
 	
-	function addNoteToGridView(type:Int, indexX:Int, indexY:Int, absY:Float):Void {
+	function addNoteToGridView(type:Int, indexX:Int, indexY:Int, absY:Float, vel:Float):Void {
 		var noteBall:NoteBall = _noteballPool.getNoteball();
 		noteBall.alpha = 1;
 		_noteBallsContainer.addChild(noteBall);
@@ -186,6 +201,7 @@ class GridView extends Sprite
 		noteBall.setIndexX(indexX);
 		noteBall.setIndexY(indexY);
 		noteBall.setPosY(absY);
+		noteBall.setVel(vel);
 		_gridNote[indexX - 1].push(noteBall);
 		
 		noteBall.changeState(FALLING);

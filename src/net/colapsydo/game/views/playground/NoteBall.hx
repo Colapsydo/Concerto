@@ -23,8 +23,10 @@ class NoteBall extends Sprite
 	var _posY:Float; //Actual Pos Y on grid view
 	var _targetY:Float;  //Target Pos Y on grid view
 	var _dir:Int = 1;
-		
+	
 	var _fallingVel:Float;
+	var _bouncingCoeff:Float;
+	var _bounceLimit:Float; 
 	
 	var _type:Int;
 	var _state:NoteState;
@@ -59,22 +61,26 @@ class NoteBall extends Sprite
 			dispatchEvent(new Event(NoteBall.LANDED));
 		}else {
 			_posY += _size * _fallingVel;
-			_fallingVel += _fallingVel < .5 ? 0.035 : 0;
+			_fallingVel += _fallingVel < .5 ? 0.015 : 0;
 		}
 		this.y = _posY;
 	}
 	
 	private function bouncingHandler(e:Event):Void {
 		var scaleY = this.scaleY;
-		scaleY -= _dir * .11;
-		this.scaleX += _dir * .06;
-		if (scaleY <= 0.4) {
-			scaleY = .4;
+		scaleY -= _dir * .11*_bouncingCoeff;
+		this.scaleX += _dir * .06*_bouncingCoeff;
+		this.y += _indexY==1 ? 0 : _dir*_bouncingCoeff ;
+		if (scaleY <= _bounceLimit) {
+			scaleY = _bounceLimit;
 			_dir *= -1;
 		}
 		if (scaleY >= 1) {
 			scaleY = 1;
 			this.scaleX = 1;
+			this.y = _posY;
+			_fallingVel = 0;
+			_state = IDLE;
 			removeEventListener(Event.ENTER_FRAME, bouncingHandler);
 			dispatchEvent(new Event(NoteBall.BOUNCED));
 		}
@@ -84,7 +90,9 @@ class NoteBall extends Sprite
 	
 	private function explodingHandler(e:Event):Void {
 		this.alpha -= 0.05;
+		this.scaleX = this.scaleY += 0.05;
 		if (this.alpha < 0) {
+			this.scaleX = this.scaleY = 1;
 			removeEventListener(Event.ENTER_FRAME, explodingHandler);
 			dispatchEvent(new Event(NoteBall.DESTROYED));
 		}
@@ -117,9 +125,9 @@ class NoteBall extends Sprite
 			case 4:
 				this.graphics.beginFill(0xFFFF00);
 			case 5:
-				this.graphics.beginFill(0xFF00FF);
+				this.graphics.beginFill(0x9132C5);
 			case 6:
-				this.graphics.beginFill(0x00FFFF);
+				this.graphics.beginFill(0xFF800E);
 		}
 		if (grid == true) {
 			this.graphics.drawCircle(0, -_size, _size);
@@ -153,10 +161,12 @@ class NoteBall extends Sprite
 				removeEventListener(Event.ENTER_FRAME, blinkingHandler);
 				this.alpha = 1;				
 			case FALLING:
-				_fallingVel = 0.1;
+				_fallingVel = _fallingVel == 0 ? 0.1 : _fallingVel;
 				addEventListener(Event.ENTER_FRAME, fallingHandler);
 			case BOUNCING:
 				_dir = 1;
+				_bouncingCoeff = _fallingVel * 2;
+				_bounceLimit = 1 - (.6 * _bouncingCoeff);
 				addEventListener(Event.ENTER_FRAME, bouncingHandler);
 			case BLINKING:
 				if (this.alpha == 1) {
@@ -191,6 +201,8 @@ class NoteBall extends Sprite
 	public function getIndexY():Int { return(_indexY); }
 	public function getPosY():Float{ return(_posY); }
 	public function getTargetY():Float { return(_targetY); }
+	public function getState():NoteState { return(_state); }
+	public function getVel():Float { return(_fallingVel); }
 	
 	public function setIndexX(indexX:Int):Void {
 		_indexX = indexX;
@@ -203,5 +215,8 @@ class NoteBall extends Sprite
 	public function setPosY(posY:Float):Void {
 		_posY = (15.5-posY)*_size*2;
 		this.y = _posY;
+	}
+	public function setVel(vel:Float):Void{
+		_fallingVel = vel;
 	}
 }

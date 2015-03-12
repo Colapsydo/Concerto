@@ -261,6 +261,8 @@ class ActivePair extends EventDispatcher
 	public function getSlavePosX():Int { return (_slaveAbsPosX);}
 	public function getSlaveFinalPos():Int { return(_slaveFinalPos); }
 	public function getTrigo():Int { return(_trigo);}
+	public function getDownVel():Float { return(_descentVelocity); }
+	
 	
 	
 }

@@ -61,11 +61,9 @@ class Distribution
 	}
 	
 	public function transform(color:Int):Int {
-		trace("start color", color);
 		if (color < _limitType) {
 			color++;
 			_maxType = color > _maxType?color:_maxType;
-			trace("new color", color, "new max type", _maxType);
 			return(color);
 		}else {
 			return(0);

@@ -39,9 +39,9 @@ class NotePreview extends Sprite
 			case 4:
 				this.graphics.beginFill(0xFFFF00);
 			case 5:
-				this.graphics.beginFill(0xFF00FF);
+				this.graphics.beginFill(0x9132C5);
 			case 6:
-				this.graphics.beginFill(0x00FFFF);
+				this.graphics.beginFill(0xFF800E);
 		}
 		this.graphics.drawCircle(0, 0, 5);
 		this.graphics.endFill();
