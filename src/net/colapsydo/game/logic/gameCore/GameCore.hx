@@ -21,6 +21,7 @@ enum GameState {
 class GameCore extends Sprite
 {
 	var _player:Int;
+	var _rules:GameRules;
 	var _grid:GameGrid;
 	var _distribution:Distribution;
 	var _activePair:ActivePair;
@@ -37,8 +38,12 @@ class GameCore extends Sprite
 	
 	function init(e:Event):Void{
 		removeEventListener(Event.ADDED_TO_STAGE, init);
-		_distribution = new Distribution();
-		_grid = new GameGrid(_distribution);
+		_rules = new GameRules();
+		_rules.puyoGame();
+		//_rules.musicGame();
+		
+		_distribution = new Distribution(_rules.getcolorNumStart());
+		_grid = new GameGrid(_rules, _distribution);
 		_activePair = new ActivePair(_grid, _distribution);
 		_state = DISTRIBUTION;
 	}
@@ -101,6 +106,7 @@ class GameCore extends Sprite
 	
 	//GETTERS && SETTERS
 	
+	public function getRules():GameRules { return(_rules); }
 	public function getGameGrid():GameGrid { return(_grid); }
 	public function getDistribution():Distribution { return(_distribution); }
 	public function getActivePair():ActivePair { return(_activePair);}

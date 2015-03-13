@@ -13,11 +13,8 @@ class Playground extends Sprite
 {
 	var _gameCore:GameCore;
 	
-	static var _evolution:Bool;
-	
-	public function new(evolution:Bool=true) {
+	public function new() {
 		super();
-		_evolution = evolution;
 		addEventListener(Event.ADDED_TO_STAGE, init);
 	}
 	
@@ -33,6 +30,4 @@ class Playground extends Sprite
 		//return(_gameCoreList[player]);
 		return(_gameCore);
 	}
-	
-	static public function getEvolution():Bool { return(_evolution);}
 }

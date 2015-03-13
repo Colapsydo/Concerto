@@ -22,6 +22,7 @@ class ActivePairView extends Sprite
 	var _actualRotation:Int;
 	var _rotationInProgress:Bool;
 	var _trigo:Int;
+	var _gridHeight:Int;
 	
 	var _masterPreview:NotePreview;
 	var _slavePreview:NotePreview;
@@ -36,6 +37,8 @@ class ActivePairView extends Sprite
 	
 	private function init(e:Event):Void {
 		removeEventListener(Event.ADDED_TO_STAGE, init);
+		
+		_gridHeight = _activePair.getGridHeight();
 		
 		_masterPreview = new NotePreview(1);
 		addChild(_masterPreview);
@@ -108,7 +111,7 @@ class ActivePairView extends Sprite
 	
 	function previewPosChange() {
 		_masterPreview.x = (_activePair.getMasterPosX()+.5) * _ray;
-		_masterPreview.y = (14.5 - _activePair.getMasterFinalPos()) * _ray;
+		_masterPreview.y = (_gridHeight-.5 - _activePair.getMasterFinalPos()) * _ray;
 		
 		switch(_activePair.getSlavePos()) {
 			case LEFT:
@@ -118,7 +121,7 @@ class ActivePairView extends Sprite
 			case TOP, BOTTOM:
 				_slavePreview.x = _masterPreview.x ;
 		}
-		_slavePreview.y = (14.5 - _activePair.getSlaveFinalPos()) * _ray;
+		_slavePreview.y = (_gridHeight-.5 - _activePair.getSlaveFinalPos()) * _ray;
 	}
 	
 	//PUBLIC FUNCTIONS
@@ -139,14 +142,14 @@ class ActivePairView extends Sprite
 		_targetRotation = _actualRotation = Std.int(_slaveContainer.rotation);
 		_slaveNote.rotation = -_slaveContainer.rotation;
 		_pairSprite.x = (_activePair.getMasterPosX()+.5) * _ray;
-		_pairSprite.y = (15 - _activePair.getMasterPosY()) * _ray;
+		_pairSprite.y = (_gridHeight - _activePair.getMasterPosY()) * _ray;
 		
 		previewPosChange();
 	}
 	
 	public function update():Void {
 		_pairSprite.x = (_activePair.getMasterPosX()+.5) * _ray;
-		_pairSprite.y = (15 - _activePair.getMasterPosY()) * _ray;
+		_pairSprite.y = (_gridHeight - _activePair.getMasterPosY()) * _ray;
 		
 		//if (_rotationInProgress == false && _activePair.getRotationOccured() == true) {
 			////_actualRotation = Std.int(_slaveContainer.rotation);

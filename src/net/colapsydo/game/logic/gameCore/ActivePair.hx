@@ -31,6 +31,7 @@ class ActivePair extends EventDispatcher
 	var _slaveAbsPosX:Int;
 	var _slaveFinalPos:Int; //Lign index of the final position
 	
+	var _gridHeight:Int;
 	var _descentVelocity:Float;
 	var _trigo:Int;
 	
@@ -54,10 +55,11 @@ class ActivePair extends EventDispatcher
 	function init():Void {
 		_masterAbsPosX = 2;
 		_descentVelocity = 0.025;
-		_masterPosY=15.5;
+		_gridHeight = _grid.getGridHeight()-1;
+		_masterPosY = _gridHeight + .5;
 		_slavePos = TOP;
 		_blocked = false;
-		//newPair();
+		
 	}
 	
 	function defineFinalPos():Void{
@@ -164,8 +166,8 @@ class ActivePair extends EventDispatcher
 		_slaveNote =  _distrib.getNewNote();
 		
 		//new pair out of screen
-		_masterAbsPosY = 15;
-		_masterPosY = 15.5;
+		_masterAbsPosY = _gridHeight;
+		_masterPosY = _gridHeight+.5;
 		
 		//Static pair up part screen
 		//_masterAbsPosY = 12;
@@ -237,7 +239,6 @@ class ActivePair extends EventDispatcher
 		if (posXtest > _leftSideLimit && posXtest < _rightSideLimit) {
 			_masterAbsPosX = posXtest;
 		}
-		
 		defineFinalPos();
 	}
 	
@@ -262,7 +263,7 @@ class ActivePair extends EventDispatcher
 	public function getSlaveFinalPos():Int { return(_slaveFinalPos); }
 	public function getTrigo():Int { return(_trigo);}
 	public function getDownVel():Float { return(_descentVelocity); }
-	
+	public function getGridHeight():Int { return(_gridHeight); }
 	
 	
 }

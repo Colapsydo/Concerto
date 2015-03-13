@@ -19,6 +19,7 @@ class GridView extends Sprite
 	
 	var _gameCore:GameCore;
 	var _gridData:GameGrid;
+	var _gridHeight:Int;
 	var _grid:Vector<Int>;
 	var _activePair:ActivePair;
 	var _solutions:Vector<Vector<Int>>;
@@ -46,7 +47,7 @@ class GridView extends Sprite
 	private function init(e:Event):Void {
 		removeEventListener(Event.ADDED_TO_STAGE, init);
 		
-		if (Playground.getEvolution() == true) {
+		if (_gameCore.getRules().getEvolution() == true) {
 			_cleanFunction = cleanEvo;
 		}else {
 			_cleanFunction = cleanPuy;
@@ -54,11 +55,13 @@ class GridView extends Sprite
 		
 		_gridData = _gameCore.getGameGrid();
 		_grid = _gridData.getGrid();
+		_gridHeight = _gridData.getGridHeight()-1;
 		_activePair = _gameCore.getActivePair();
 		
 		if (_step == 0) {
-			_step = Std.int(stage.stageHeight * .95 / 15);
+			_step = Std.int(stage.stageHeight * .95 / _gridHeight);
 			NoteBall.setSize(GridView.getStep());
+			NoteBall.setGridSize(_gridHeight);
 		}
 		
 		_noteballPool = new NoteballPool();
@@ -72,17 +75,17 @@ class GridView extends Sprite
 		
 		_background = new Shape();
 		_background.graphics.beginFill(0xEFEFEF);
-		_background.graphics.drawRect(0, 0, 8 * _step, 15 * _step);
+		_background.graphics.drawRect(0, 0, 8 * _step, _gridHeight * _step);
 		_background.graphics.beginFill(0x555555);
-		_background.graphics.drawRect(0, 0, _step, 14 * _step);
-		_background.graphics.drawRect(7*_step, 0, _step, 14 * _step);
-		_background.graphics.drawRect(0, 14 * _step, 8 * _step, _step);
+		_background.graphics.drawRect(0, 0, _step, (_gridHeight-1) * _step);
+		_background.graphics.drawRect(7*_step, 0, _step, (_gridHeight-1) * _step);
+		_background.graphics.drawRect(0, (_gridHeight-1) * _step, 8 * _step, _step);
 		_background.graphics.endFill();
 		_background.graphics.lineStyle(1, 0);
 		//for (i in 0...15) {
 			//if (i < 9) {
 				//_background.graphics.moveTo(i * _step, 0);
-				//_background.graphics.lineTo(i * _step, 15*_step);
+				//_background.graphics.lineTo(i * _step, _gridHeight*_step);
 			//}
 			//_background.graphics.moveTo(0, i*_step);
 			//_background.graphics.lineTo(8 * _step, i*_step);
@@ -94,7 +97,7 @@ class GridView extends Sprite
 		
 		_mask = new Shape();
 		_mask.graphics.beginFill(0xFF0000);
-		_mask.graphics.drawRect(_step, 0, 6 * _step, 14 * _step);
+		_mask.graphics.drawRect(_step, 0, 6 * _step, (_gridHeight-1) * _step);
 		_mask.graphics.endFill();
 		addChild(_mask);
 		

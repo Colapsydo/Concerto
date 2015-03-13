@@ -33,12 +33,12 @@ class NoteBall extends Sprite
 	
 	static var _blinkValue:Float;
 	static var _blinkDir:Int;
+	static var _size:Float;
+	static var _gridHeight:Int;
 	
 	static public inline var LANDED:String = "landed";
 	static public inline var BOUNCED:String = "bounced";
 	static public inline var DESTROYED:String = "destroyed";
-	
-	static var _size:Float;
 	
 	public function new(type:Int) {
 		super();
@@ -113,6 +113,7 @@ class NoteBall extends Sprite
 	//PRIVATE FUNCTIONS
 	
 	function draw(grid:Bool=false) {
+		var size:Float = 1 * _size;
 		this.graphics.clear();
 		this.graphics.lineStyle(2, 0x232323);
 		switch(_type) {
@@ -130,18 +131,18 @@ class NoteBall extends Sprite
 				this.graphics.beginFill(0xFF800E);
 		}
 		if (grid == true) {
-			this.graphics.drawCircle(0, -_size, _size);
+			this.graphics.drawCircle(0, -size, size);
 		}else {
-			this.graphics.drawCircle(0, 0, _size);
+			this.graphics.drawCircle(0, 0, size);
 		}
 		this.graphics.endFill();
 		this.graphics.lineStyle(1, 0);
 		if (grid == true) {
-			this.graphics.moveTo(0, -_size);
-			this.graphics.lineTo(0, -2*_size);
+			this.graphics.moveTo(0, -size);
+			this.graphics.lineTo(0, -2*size);
 		}else {
 			this.graphics.moveTo(0, 0);
-			this.graphics.lineTo(0, -_size);
+			this.graphics.lineTo(0, -size);
 		}
 	}
 	
@@ -190,9 +191,8 @@ class NoteBall extends Sprite
 		removeEventListener(Event.ENTER_FRAME, blinkHandler);
 	}
 	
-	static public function setSize(step:Int):Void{
-		_size = step *.5;
-	}
+	static public function setSize(step:Int):Void{_size = step * .5; }
+	static public function setGridSize(gridHeight:Int):Void{_gridHeight = gridHeight; }
 	
 	//GETTERS && SETTERS
 	
@@ -210,10 +210,10 @@ class NoteBall extends Sprite
 	}
 	public function setIndexY(indexY:Int):Void {
 		_indexY = indexY;
-		_targetY = (15 - indexY) * _size * 2;
+		_targetY = (_gridHeight - indexY) * _size * 2;
 	}
 	public function setPosY(posY:Float):Void {
-		_posY = (15.5-posY)*_size*2;
+		_posY = (_gridHeight+.5-posY)*_size*2;
 		this.y = _posY;
 	}
 	public function setVel(vel:Float):Void{

@@ -9,6 +9,7 @@ import openfl.Vector;
  */
 class GameGrid
 {
+	var _rules:GameRules;
 	var _distribution:Distribution;
 	
 	var _grid:Vector<Int>;
@@ -20,20 +21,21 @@ class GameGrid
 	var _gridHeight:Int;
 	var _cleanFunction:Dynamic;
 	
-	public function new(distribution:Distribution) {
+	public function new(rules:GameRules, distribution:Distribution) {
+		_rules = rules;
 		_distribution = distribution;
 		init();
 	}
 	
 	function init():Void{
 		//Set Clean function resp Gameplay option
-		if (Playground.getEvolution() == true) {
+		if (_rules.getEvolution() == true) {
 			_cleanFunction = cleanEvo;
 		}else {
 			_cleanFunction = cleanPuy;
 		}
 		
-		_gridHeight = 16;
+		_gridHeight = _rules.getGridHeight();
 		
 		_grid = new Vector<Int>();
 		for (i in 0..._gridHeight*8) {
@@ -48,8 +50,8 @@ class GameGrid
 		for (i in 0...8) {
 			_firstEmptyCells.push(1);
 		}
-		_firstEmptyCells[0] = 15;
-		_firstEmptyCells[7] = 15;
+		_firstEmptyCells[0] = _gridHeight-1;
+		_firstEmptyCells[7] = _gridHeight-1;
 		
 		_checked = new Vector<Bool>();
 		_checked.length = _grid.length;
@@ -77,8 +79,9 @@ class GameGrid
 	}
 	
 	function readGrid():Void {
-		for (i in 0...16) {
-			trace(_grid[(15 - i) * 8], _grid[(15 - i) * 8 + 1], _grid[(15 - i) * 8 + 2], _grid[(15 - i) * 8 + 3], _grid[(15 - i) * 8 + 4], _grid[(15 - i) * 8 + 5], _grid[(15 - i) * 8 + 6], _grid[(15 - i) * 8 + 7]);
+		for (i in 0..._gridHeight) {
+			var gridMin:Int = _gridHeight - 1;
+			trace(_grid[(gridMin - i) * 8], _grid[(gridMin - i) * 8 + 1], _grid[(gridMin - i) * 8 + 2], _grid[(gridMin - i) * 8 + 3], _grid[(gridMin - i) * 8 + 4], _grid[(gridMin - i) * 8 + 5], _grid[(gridMin - i) * 8 + 6], _grid[(gridMin - i) * 8 + 7]);
 		}
 	}
 	
@@ -137,7 +140,7 @@ class GameGrid
 		var index:Int; 
 		for (i in 1...7) {
 			stepper = 1;
-			for (j in 1...16) {
+			for (j in 1..._gridHeight) {
 				index = i + j * 8;
 				if (_grid[index] != 0) {
 					if (j != stepper) {
@@ -160,7 +163,7 @@ class GameGrid
 	
 	public function defineEmptyCells():Void{
 		for (i in 1...7) {
-			for (j in 1...16) {
+			for (j in 1..._gridHeight) {
 				if (_grid[j * 8 + i] == 0) {
 					_firstEmptyCells[i] = j;
 					break;
@@ -243,8 +246,9 @@ class GameGrid
 	}
 	
 	public function checkGameLimit():Bool {
+		var start:Int = (_gridHeight - 3) * 8;
 		for (i in 1...7) {
-			if (_grid[104 + i] != 0) {return(true);}
+			if (_grid[start + i] != 0) {return(true);}
 		}
 		return(false);
 	}
@@ -252,6 +256,7 @@ class GameGrid
 	//GETTERS && SETTERS
 	
 	public function getGrid():Vector<Int> { return(_grid); }
+	public function getGridHeight():Int { return(_gridHeight);}
 	public function getValue(index:Int):Int { return(_grid[index]); }
 	public function getSolutions():Vector<Vector<Int>> { return(_solutions); }
 	public function getFirstEmptyCell(col:Int):Int { return(_firstEmptyCells[col]); }

@@ -18,7 +18,8 @@ class Distribution
 	
 	static var _noteNum:Int;
 	
-	public function new() {
+	public function new(colorNum:Int) {
+		_maxType = colorNum;
 		init();
 	}
 	
@@ -28,14 +29,11 @@ class Distribution
 		_gameSeed = 726854171;
 		_randomGenerator = new Rand(_gameSeed);
 		
-		_maxType = Playground.getEvolution()==true ? 3 : 4;
 		_limitType = 6;
 		_nextPairs = new Vector<Int>();
 		for (i in 0...4) {
 			_nextPairs.push(uniformDistribution());
 		}
-		
-		trace(_nextPairs);
 	}
 	
 	//PRIVATE FUNCTIONS
