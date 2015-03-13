@@ -1,6 +1,7 @@
 package net.colapsydo.game.logic.gameCore;
 
 import flash.events.Event;
+import haxe.Constraints.Function;
 import openfl.display.Sprite;
 import openfl.events.EventDispatcher;
 
@@ -14,6 +15,7 @@ enum GameState {
 	PLAY;
 	GRAVITY;
 	CHAIN;
+	LOOSE;
 }
  
 class GameCore extends Sprite
@@ -78,9 +80,15 @@ class GameCore extends Sprite
 			_grid.cleanSolutions();
 			_state = CHAIN;
 		}else {
-			_grid.defineEmptyCells();
-			_activePair.newPair();
-			_state = DISTRIBUTION;
+			//check here for gameover
+			if (_grid.checkGameLimit() == false) {
+				_grid.defineEmptyCells();
+				_activePair.newPair();
+				_state = DISTRIBUTION;
+			}else {
+				trace("you loose");
+				_state = LOOSE;
+			}
 		}
 		dispatchEvent(new Event(GameCore.UPDATE));	
 	}

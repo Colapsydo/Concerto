@@ -28,7 +28,7 @@ class Distribution
 		_gameSeed = 726854171;
 		_randomGenerator = new Rand(_gameSeed);
 		
-		_maxType = 3;
+		_maxType = Playground.getEvolution()==true ? 3 : 4;
 		_limitType = 6;
 		_nextPairs = new Vector<Int>();
 		for (i in 0...4) {

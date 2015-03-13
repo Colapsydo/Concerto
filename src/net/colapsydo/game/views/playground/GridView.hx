@@ -8,6 +8,7 @@ import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.Vector;
 import net.colapsydo.game.views.playground.NoteBall.NoteState;
+import net.colapsydo.game.logic.Playground;
 
 /**
  * ...
@@ -32,6 +33,8 @@ class GridView extends Sprite
 	var _activePairView:ActivePairView;
 	var _mask:Shape;
 	
+	var _cleanFunction:Dynamic;
+	
 	static var _step:Int;
 	
 	public function new(gameCore:GameCore) {
@@ -42,6 +45,12 @@ class GridView extends Sprite
 	
 	private function init(e:Event):Void {
 		removeEventListener(Event.ADDED_TO_STAGE, init);
+		
+		if (Playground.getEvolution() == true) {
+			_cleanFunction = cleanEvo;
+		}else {
+			_cleanFunction = cleanPuy;
+		}
 		
 		_gridData = _gameCore.getGameGrid();
 		_grid = _gridData.getGrid();
@@ -193,6 +202,55 @@ class GridView extends Sprite
 	
 	//PRIVATE FUNCTION
 	
+	function cleanEvo():Void {
+		var indexX:Int;
+		var indexY:Int;
+		//var targetX:Int; //for transformation animations
+		//var targetY:Int;
+		for (i in 0..._solutions.length) {
+			//TRANSFORMATION WITHOUT ANIMATION
+			var value:Int = _gridData.getValue(_solutions[i][0]);
+			indexX = _solutions[i][0];
+			indexY = Std.int(indexX / 8)-1;
+			indexX %= 8;
+			indexX--;
+			if (value != 0) {
+				//targetX = _gridNote[indexX][indexY].getIndexX();
+				//targetY = _gridNote[indexX][indexY].getIndexY();
+				//_gridNote[indexX][indexY].changeState(TRANSFORMING);
+				_gridNote[indexX][indexY].convert(value, true);
+			}else {
+				_gridNote[indexX][indexY].changeState(EXPLODING);
+				_destructionNum++;
+			}
+						
+			for (j in 1..._solutions[i].length) {
+				indexX = _solutions[i][j];
+				indexY = Std.int(indexX / 8)-1;
+				indexX %= 8;
+				indexX--;
+				//_gridNote[indexX][indexY].setTarget(targetX, targetY);
+				_gridNote[indexX][indexY].changeState(EXPLODING);
+				_destructionNum++;
+			}
+		}
+	}
+	
+	function cleanPuy():Void {
+		var indexX:Int;
+		var indexY:Int;
+		for (i in 0..._solutions.length) {
+			for (j in 0..._solutions[i].length) {
+				indexX = _solutions[i][j];
+				indexY = Std.int(indexX / 8)-1;
+				indexX %= 8;
+				indexX--;
+				_gridNote[indexX][indexY].changeState(EXPLODING);
+				_destructionNum++;
+			}
+		}
+	}
+	
 	function addNoteToGridView(type:Int, indexX:Int, indexY:Int, absY:Float, vel:Float):Void {
 		var noteBall:NoteBall = _noteballPool.getNoteball();
 		noteBall.alpha = 1;
@@ -216,12 +274,6 @@ class GridView extends Sprite
 			}
 		}
 	}
-	
-	//use of noteballPool
-		//var noteball:NoteBall = _noteballPool.getNoteball();
-		//noteball.convert(2);
-		//_gridNote[0].push(noteball);
-		//_noteballPool.discardNoteball(_gridNote[0].splice(0, 1)[0]);
 	
 	//PUBLIC FUNCTIONS
 	
@@ -250,51 +302,12 @@ class GridView extends Sprite
 	
 	public function removeSolutions():Void{
 		_solutions = _gridData.getSolutions();
-		var indexX:Int;
-		var indexY:Int;
-		//var targetX:Int; //for transformation animations
-		//var targetY:Int;
-		for (i in 0..._solutions.length) {
-			for (j in 0..._solutions[i].length) {
-				indexX = _solutions[i][j];
-				indexY = Std.int(indexX / 8)-1;
-				indexX %= 8;
-				indexX--;
-				if (j == 0) {
-					//TRANSFORMATION WITHOUT ANIMATION
-					var value:Int = _gridData.getValue(_solutions[i][j]);
-					if (value != 0) {
-						_gridNote[indexX][indexY].convert(value, true);
-					}else {
-						_gridNote[indexX][indexY].changeState(EXPLODING);
-						_destructionNum++;
-					}
-					//targetX = _gridNote[indexX][indexY].getIndexX();
-					//targetY = _gridNote[indexX][indexY].getIndexY();
-					//_gridNote[indexX][indexY].changeState(TRANSFORMING);
-				}else {
-					//_gridNote[indexX][indexY].setTarget(targetX, targetY);
-					_gridNote[indexX][indexY].changeState(EXPLODING);
-					_destructionNum++;
-				}
-			}
-		}
-		
-		//for (i in 0..._solutions.length) {
-			//for (j in 0..._solutions[i].length) {
-				//indexX = _solutions[i][j];
-				//indexY = Std.int(indexX / 8)-1;
-				//indexX %= 8;
-				//indexX--;
-			//}
-		//}
+		_cleanFunction();
 	}
 	
 	//GETTERS && SETTERS
 	
 	static public function getStep():Int { return(_step);}
-	
-	
 	
 	
 }

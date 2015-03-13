@@ -65,6 +65,7 @@ class GameView extends Sprite
 				_grid.applyGravity();
 			case CHAIN:
 				_grid.removeSolutions();
+			case LOOSE:
 			
 		}
 	}

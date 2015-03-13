@@ -1,4 +1,5 @@
 package net.colapsydo.game.logic.gameCore;
+import haxe.Constraints.Function;
 import openfl.Vector;
 
 /**
@@ -16,14 +17,26 @@ class GameGrid
 	var _solutions:Vector<Vector<Int>>;
 	var _firstEmptyCells:Vector<Int>;
 	
+	var _gridHeight:Int;
+	var _cleanFunction:Dynamic;
+	
 	public function new(distribution:Distribution) {
 		_distribution = distribution;
 		init();
 	}
 	
 	function init():Void{
+		//Set Clean function resp Gameplay option
+		if (Playground.getEvolution() == true) {
+			_cleanFunction = cleanEvo;
+		}else {
+			_cleanFunction = cleanPuy;
+		}
+		
+		_gridHeight = 16;
+		
 		_grid = new Vector<Int>();
-		for (i in 0...128) {
+		for (i in 0..._gridHeight*8) {
 			if (i % 8 == 0 || (i + 1) % 8 == 0 || i < 8) {
 				_grid.push( -1);
 			}else {
@@ -45,6 +58,23 @@ class GameGrid
 	}
 	
 	//PRIVATE FUNCTIONS
+	
+	function cleanEvo() {
+		for (i in 0..._solutions.length) {
+			_grid[_solutions[i][0]] = _distribution.transform(_grid[_solutions[i][0]]);
+			for (j in 1..._solutions[i].length) {
+				_grid[_solutions[i][j]]= 0;
+			}
+		}
+	}
+	
+	function cleanPuy() {
+		for (i in 0..._solutions.length) {
+			for (j in 0..._solutions[i].length) {
+				_grid[_solutions[i][j]]= 0;
+			}
+		}
+	}
 	
 	function readGrid():Void {
 		for (i in 0...16) {
@@ -184,12 +214,8 @@ class GameGrid
 		//calculate Score here
 		
 		//scan solutions and remove them from grid
-		for (i in 0..._solutions.length) {
-			_grid[_solutions[i][0]] = _distribution.transform(_grid[_solutions[i][0]]);
-			for (j in 1..._solutions[i].length) {
-				_grid[_solutions[i][j]]= 0;
-			}
-		}
+		_cleanFunction();
+		
 	}
 	
 	public function hasSolutions():Bool { return(_solutions.length > 0);}
@@ -214,6 +240,13 @@ class GameGrid
 			}
 		}
 		return(7);
+	}
+	
+	public function checkGameLimit():Bool {
+		for (i in 1...7) {
+			if (_grid[104 + i] != 0) {return(true);}
+		}
+		return(false);
 	}
 	
 	//GETTERS && SETTERS
