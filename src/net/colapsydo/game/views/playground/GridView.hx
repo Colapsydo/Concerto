@@ -25,6 +25,7 @@ class GridView extends Sprite
 	var _solutions:Vector<Vector<Int>>;
 	
 	var _noteballPool:NoteballPool;
+	var _lightBallPool:LightBallPool;
 	var _gridNote:Vector<Vector<NoteBall>>;
 	var _gravityNum:Int;
 	var _destructionNum:Int;
@@ -33,7 +34,8 @@ class GridView extends Sprite
 	var _noteBallsContainer:Sprite;
 	var _activePairView:ActivePairView;
 	var _mask:Shape;
-	
+	var _lightBallsContainer:Sprite;
+
 	var _cleanFunction:Dynamic;
 	
 	static var _step:Int;
@@ -46,12 +48,6 @@ class GridView extends Sprite
 	
 	private function init(e:Event):Void {
 		removeEventListener(Event.ADDED_TO_STAGE, init);
-		
-		if (_gameCore.getRules().getEvolution() == true) {
-			_cleanFunction = cleanEvo;
-		}else {
-			_cleanFunction = cleanPuy;
-		}
 		
 		_gridData = _gameCore.getGameGrid();
 		_grid = _gridData.getGrid();
@@ -107,12 +103,24 @@ class GridView extends Sprite
 		_noteBallsContainer.addEventListener(NoteBall.LANDED, landedHandler, true);
 		_noteBallsContainer.addEventListener(NoteBall.BOUNCED, bouncedHandler, true);
 		_noteBallsContainer.addEventListener(NoteBall.DESTROYED, destructionHandler, true);		
+		_noteBallsContainer.addEventListener(NoteBall.TRANSFORMED, transformationHandler, true);		
 		
 		_activePairView = new ActivePairView(_activePair);
 		addChild(_activePairView);
 		_activePairView.mask = _mask;
 		_activePairView.addEventListener(ActivePair.PLAYED, playedHandler);
 		_activePair.addEventListener(ActivePair.FINALPOSCHANGE, finalPosChangeHandler);
+		
+		if (_gameCore.getRules().getEvolution() == true) {
+			_cleanFunction = cleanEvo;
+			_lightBallPool = new LightBallPool();
+			_lightBallsContainer = new Sprite();
+			addChild(_lightBallsContainer);
+			_lightBallsContainer.addEventListener(LightBall.ARRIVAL, arrivalHandler, true);
+			LightBall.setSize(GridView.getStep());
+		}else {
+			_cleanFunction = cleanPuy;
+		}
 	}
 	
 	//HANDLERS
@@ -191,6 +199,19 @@ class GridView extends Sprite
 	private function destructionHandler(e:Event):Void {
 		//use of noteballPool
 		var noteball:NoteBall = cast(e.target, NoteBall);
+		
+		//creation of lightballs
+		if (noteball.getTarget() != null) {
+			var type:Int = noteball.getType();
+			var light:LightBall;
+			for (i in 0...type) {
+				light = _lightBallPool.getLightBall();
+				light.convert(type, noteball.x, noteball.y, noteball.getTarget());
+				_lightBallsContainer.addChild(light);
+			}
+			trace(_lightBallPool.getUsed());
+		}		
+		
 		var indexX:Int = noteball.getIndexX()-1;
 		var indexY:Int = _gridNote[indexX].lastIndexOf(noteball);
 		_noteBallsContainer.removeChild(noteball);
@@ -203,13 +224,27 @@ class GridView extends Sprite
 		}
 	}
 	
+	private function transformationHandler(e:Event):Void {
+		_destructionNum--;
+		
+		if (_destructionNum == 0) {
+			_gameCore.destructionComplete();
+		}
+	}
+	
+	private function arrivalHandler(e:Event):Void {
+		var lightBall:LightBall = cast(e.target, LightBall);
+		_lightBallPool.discardLightBall(lightBall);
+		_lightBallsContainer.removeChild(lightBall);
+	}
+	
 	//PRIVATE FUNCTION
 	
 	function cleanEvo():Void {
 		var indexX:Int;
 		var indexY:Int;
-		//var targetX:Int; //for transformation animations
-		//var targetY:Int;
+		var targetX:Int;
+		var targetY:Int;
 		for (i in 0..._solutions.length) {
 			//TRANSFORMATION WITHOUT ANIMATION
 			var value:Int = _gridData.getValue(_solutions[i][0]);
@@ -218,11 +253,14 @@ class GridView extends Sprite
 			indexX %= 8;
 			indexX--;
 			if (value != 0) {
-				//targetX = _gridNote[indexX][indexY].getIndexX();
-				//targetY = _gridNote[indexX][indexY].getIndexY();
-				//_gridNote[indexX][indexY].changeState(TRANSFORMING);
-				_gridNote[indexX][indexY].convert(value, true);
+				targetX = indexX;
+				targetY = indexY;
+				_gridNote[indexX][indexY].changeState(TRANSFORMING);
+				_gridNote[indexX][indexY].setType(value);
+				_destructionNum++;
 			}else {
+				targetX = targetY = -1;
+				_gridNote[indexX][indexY].setTarget(null); 
 				_gridNote[indexX][indexY].changeState(EXPLODING);
 				_destructionNum++;
 			}
@@ -232,7 +270,11 @@ class GridView extends Sprite
 				indexY = Std.int(indexX / 8)-1;
 				indexX %= 8;
 				indexX--;
-				//_gridNote[indexX][indexY].setTarget(targetX, targetY);
+				if (targetX <0) { 
+					_gridNote[indexX][indexY].setTarget(null); 
+				}else {
+					_gridNote[indexX][indexY].setTarget(_gridNote[targetX][targetY]); 
+				}
 				_gridNote[indexX][indexY].changeState(EXPLODING);
 				_destructionNum++;
 			}

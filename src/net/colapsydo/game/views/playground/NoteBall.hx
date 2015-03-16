@@ -12,8 +12,8 @@ enum NoteState {
 	FALLING;
 	BOUNCING;
 	BLINKING;
-	TRANSFORMING;
 	EXPLODING;
+	TRANSFORMING;
 }
  
 class NoteBall extends Sprite
@@ -22,7 +22,7 @@ class NoteBall extends Sprite
 	var _indexY:Int; //final Y index in Datagrid
 	var _posY:Float; //Actual Pos Y on grid view
 	var _targetY:Float;  //Target Pos Y on grid view
-	var _dir:Int = 1;
+	var _dir:Float = 1;
 	
 	var _fallingVel:Float;
 	var _bouncingCoeff:Float;
@@ -30,6 +30,9 @@ class NoteBall extends Sprite
 	
 	var _type:Int;
 	var _state:NoteState;
+	
+	var _noteballTarget:NoteBall;
+	var _incomingLights:Int;
 	
 	static var _blinkValue:Float;
 	static var _blinkDir:Int;
@@ -39,6 +42,7 @@ class NoteBall extends Sprite
 	static public inline var LANDED:String = "landed";
 	static public inline var BOUNCED:String = "bounced";
 	static public inline var DESTROYED:String = "destroyed";
+	static public inline var TRANSFORMED:String = "transformed";
 	
 	public function new(type:Int) {
 		super();
@@ -61,7 +65,7 @@ class NoteBall extends Sprite
 			dispatchEvent(new Event(NoteBall.LANDED));
 		}else {
 			_posY += _size * _fallingVel;
-			_fallingVel += _fallingVel < .5 ? 0.015 : 0;
+			_fallingVel += _fallingVel < .5 ? 0.03 : 0;
 		}
 		this.y = _posY;
 	}
@@ -89,13 +93,26 @@ class NoteBall extends Sprite
 	}
 	
 	private function explodingHandler(e:Event):Void {
-		this.alpha -= 0.05;
-		this.scaleX = this.scaleY += 0.05;
-		if (this.alpha < 0) {
-			this.scaleX = this.scaleY = 1;
+		var scale:Float = this.scaleX;
+		scale += 0.05 * _dir;
+		if (scale > 1.2) {
+			scale = 1.2;
+			_dir *= -1.5;
+		}
+		if (scale < 0.3) {
+			scale = 0.3;
 			removeEventListener(Event.ENTER_FRAME, explodingHandler);
 			dispatchEvent(new Event(NoteBall.DESTROYED));
 		}
+		this.scaleX = this.scaleY = scale;
+	}
+	
+	private function transformingHandler(e:Event):Void {
+		//var color:Float = this.
+	}
+	
+	private function lightOffHandler(e:Event):Void {
+		
 	}
 	
 	private function blinkingHandler(e:Event):Void {
@@ -152,6 +169,7 @@ class NoteBall extends Sprite
 		//grid will change the position resp y to have the scale animation on y
 		_type = type;
 		draw(grid);
+		this.scaleX = this.scaleY = 1;
 		_state = IDLE;
 	}
 	
@@ -162,7 +180,7 @@ class NoteBall extends Sprite
 				removeEventListener(Event.ENTER_FRAME, blinkingHandler);
 				this.alpha = 1;				
 			case FALLING:
-				_fallingVel = _fallingVel == 0 ? 0.1 : _fallingVel;
+				_fallingVel = _fallingVel == 0 ? 0.05 : _fallingVel;
 				addEventListener(Event.ENTER_FRAME, fallingHandler);
 			case BOUNCING:
 				_dir = 1;
@@ -174,10 +192,11 @@ class NoteBall extends Sprite
 					this.alpha = _blinkValue;
 					addEventListener(Event.ENTER_FRAME, blinkingHandler);
 				}
-			case TRANSFORMING:
 			case EXPLODING:
+				_dir = 1;
 				addEventListener(Event.ENTER_FRAME, explodingHandler);
-				
+			case TRANSFORMING:	
+				//addEventListener(Event.ENTER_FRAME, transformingHandler);
 		}
 	}
 	
@@ -189,6 +208,19 @@ class NoteBall extends Sprite
 	
 	public function stopBlinking():Void{
 		removeEventListener(Event.ENTER_FRAME, blinkHandler);
+	}
+	
+	public function incoming():Void {
+		_incomingLights++;
+	}
+	
+	public function arrived():Void {
+		_incomingLights--;
+		if (_incomingLights == 0) {
+			convert(_type, true);
+			//addEventListener(Event.ENTER_FRAME, lightOffHandler);
+			dispatchEvent(new Event(NoteBall.TRANSFORMED));
+		}
 	}
 	
 	static public function setSize(step:Int):Void{_size = step * .5; }
@@ -203,7 +235,11 @@ class NoteBall extends Sprite
 	public function getTargetY():Float { return(_targetY); }
 	public function getState():NoteState { return(_state); }
 	public function getVel():Float { return(_fallingVel); }
+	public function getTarget():NoteBall { return(_noteballTarget); }
 	
+	public function setType(value:Int):Void {
+		_type = value;
+	}
 	public function setIndexX(indexX:Int):Void {
 		_indexX = indexX;
 		this.x = (_indexX + .5) * _size * 2;
@@ -219,4 +255,8 @@ class NoteBall extends Sprite
 	public function setVel(vel:Float):Void{
 		_fallingVel = vel;
 	}
+	public function setTarget(target:NoteBall):Void {
+		_noteballTarget = target;
+	}
+	
 }

@@ -39,8 +39,8 @@ class GameCore extends Sprite
 	function init(e:Event):Void{
 		removeEventListener(Event.ADDED_TO_STAGE, init);
 		_rules = new GameRules();
-		_rules.puyoGame();
-		//_rules.musicGame();
+		//_rules.puyoGame();
+		_rules.musicGame();
 		
 		_distribution = new Distribution(_rules.getcolorNumStart());
 		_grid = new GameGrid(_rules, _distribution);
