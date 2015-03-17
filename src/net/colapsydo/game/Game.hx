@@ -21,6 +21,7 @@ class Game extends Sprite
 	
 	private function init(e:Event):Void {
 		removeEventListener(Event.ADDED_TO_STAGE, init);
+		
 		_playground = new Playground(); 
 		addChild(_playground);
 		_playgroundView = new PlaygroundView(_playground);

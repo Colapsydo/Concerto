@@ -39,7 +39,8 @@ class Distribution
 	//PRIVATE FUNCTIONS
 	
 	function uniformDistribution():Int {
-		return(_randomGenerator.random(_maxType)+1);
+		return(_maxType - Std.int(Math.sqrt(_randomGenerator.rand())*_maxType));
+		//return(_randomGenerator.random(_maxType)+1);
 	}
 	
 	//PUBLIC FUNCTIONS

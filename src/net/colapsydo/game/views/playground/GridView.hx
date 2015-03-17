@@ -209,7 +209,6 @@ class GridView extends Sprite
 				light.convert(type, noteball.x, noteball.y, noteball.getTarget());
 				_lightBallsContainer.addChild(light);
 			}
-			trace(_lightBallPool.getUsed());
 		}		
 		
 		var indexX:Int = noteball.getIndexX()-1;
