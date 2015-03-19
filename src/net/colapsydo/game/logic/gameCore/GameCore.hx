@@ -24,6 +24,7 @@ class GameCore extends Sprite
 	var _rules:GameRules;
 	var _grid:GameGrid;
 	var _distribution:Distribution;
+	var _scoringSystem:ScoringSystem;
 	var _activePair:ActivePair;
 	
 	var _state:GameState;
@@ -45,6 +46,7 @@ class GameCore extends Sprite
 		_distribution = new Distribution(_rules.getcolorNumStart());
 		_grid = new GameGrid(_rules, _distribution);
 		_activePair = new ActivePair(_grid, _distribution);
+		_scoringSystem = new ScoringSystem(_grid);
 		_state = DISTRIBUTION;
 	}
 	
@@ -60,6 +62,7 @@ class GameCore extends Sprite
 		_activePair.removeEventListener(ActivePair.PLAYED, playedHandler);
 		
 		_grid.lookForSolutions();
+		if (_grid.hasSolutions() == true) { _scoringSystem.newAttack(); }
 		_state = GRAVITY;
 		
 		dispatchEvent(new Event(GameCore.UPDATE));
@@ -100,6 +103,7 @@ class GameCore extends Sprite
 	
 	public function destructionComplete():Void{
 		_grid.lookForSolutions();
+		if (_grid.hasSolutions() == true) { _scoringSystem.addHit(); }
 		_state = GRAVITY;
 		dispatchEvent(new Event(GameCore.UPDATE));
 	}

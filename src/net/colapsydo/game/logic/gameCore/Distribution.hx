@@ -16,6 +16,8 @@ class Distribution
 	var _limitType:Int;
 	var _nextPairs:Vector<Int>;
 	
+	var _transfoSchedule:Vector<Int>;
+	
 	static var _noteNum:Int;
 	
 	public function new(colorNum:Int) {
@@ -63,6 +65,9 @@ class Distribution
 		if (color < _limitType) {
 			color++;
 			_maxType = color > _maxType?color:_maxType;
+			//if (color != _transfoSchedule[0]) {
+				//
+			//}
 			return(color);
 		}else {
 			return(0);
