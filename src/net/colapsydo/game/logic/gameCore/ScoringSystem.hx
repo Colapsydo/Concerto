@@ -45,18 +45,20 @@ import openfl.Vector;
 		
 		_hitScore = 0;
 		_hitMultiplier = solutions.length; //number of groups
-		var maxLength:Int = 0;
+		var groupMultiplier:Int = 0;
 		
 		for (i in 0..._hitMultiplier) {
-			_hitScore += _colorWeight[_grid.getValue(solutions[i][0]) - 1] * solutions[i].length * 10;
-			maxLength = maxLength > solutions[i].length ? maxLength : solutions[i].length;
+			var groupSize = solutions[i].length;
+			
+			_hitScore += _colorWeight[_grid.getValue(solutions[i][0]) - 1] * groupSize * 10;
+			
+			groupSize = groupSize > 11 ? 11 : groupSize;
+			groupSize -= 4;
+			groupMultiplier+= _lengthWeight[groupSize];
 		}
 		
-		maxLength = maxLength > 11 ? 1 : maxLength;
-		maxLength -= 4;
-		
 		_hitMultiplier--;
-		_hitMultiplier += maxLength;
+		_hitMultiplier += groupMultiplier;
 		_hitMultiplier += _chainCoeff[_chains];
 		_chains++;
 		
