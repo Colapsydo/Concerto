@@ -65,7 +65,7 @@ class KeyboardController
 						}
 					}
 				}
-			case 88: //x
+			case 38,88: //x
 				if (_rotationAT == false) {
 					_rotationAT = true;
 					if (_working == true) { 
@@ -94,7 +94,7 @@ class KeyboardController
 				_activePair.upSpeed(_down);
 			case 87: //w
 				_rotationT = false;				
-			case 88: //x
+			case 38,88: //x
 				_rotationAT = false;
 			default:
 		}
