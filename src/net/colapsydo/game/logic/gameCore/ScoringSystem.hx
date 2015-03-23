@@ -18,7 +18,7 @@ import openfl.Vector;
 	
 	static var _colorWeight:Vector<Int> = Vector.ofArray([1, 2, 3, 4, 5, 6]);
 	static var _lengthWeight:Vector<Int> = Vector.ofArray([0, 1, 2, 3, 4, 5,6,7]);
-	static var _chainCoeff:Vector<Int> = Vector.ofArray([1,2,4,6,8,12]);
+	static var _chainCoeff:Vector<Int> = Vector.ofArray([1,2,4,8,16,32,64,128,256,512,1024]);
 	
 	public function new(grid:GameGrid):Void {
 		_grid = grid;
@@ -59,6 +59,7 @@ import openfl.Vector;
 		
 		_hitMultiplier--;
 		_hitMultiplier += groupMultiplier;
+		_chains = _chains > 10?10:_chains;
 		_hitMultiplier += _chainCoeff[_chains];
 		_chains++;
 		

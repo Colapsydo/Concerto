@@ -29,6 +29,9 @@ class GameCore extends Sprite
 	
 	var _state:GameState;
 	
+	var _actiNum:Int;
+	var _actiType:Int;
+	
 	static public inline var UPDATE:String = "update";
 	
 	public function new(player:Int) {
@@ -44,6 +47,7 @@ class GameCore extends Sprite
 		_rules.musicGame();
 		
 		_distribution = new Distribution(_rules.getcolorNumStart());
+		_distribution.addEventListener(Distribution.ACTIVATION, activationHandler);
 		_grid = new GameGrid(_rules, _distribution);
 		_activePair = new ActivePair(_grid, _distribution);
 		_scoringSystem = new ScoringSystem(_grid);
@@ -54,6 +58,12 @@ class GameCore extends Sprite
 	
 	private function efHandler(e:Event):Void {
 		_activePair.update();
+	}
+	
+	private function activationHandler(e:Event):Void {
+		_actiType = cast(e.target, Distribution).getMaxType();
+		_actiNum = cast(e.target, Distribution).getNoteNum();
+		dispatchEvent(e);
 	}
 	
 	private function playedHandler(e:Event):Void {	
@@ -81,6 +91,10 @@ class GameCore extends Sprite
 		dispatchEvent(new Event(GameCore.UPDATE));	
 		_activePair.addEventListener(ActivePair.PLAYED, playedHandler);
 		addEventListener(Event.ENTER_FRAME, efHandler);
+	}
+	
+	public function schedule(type:Int, num:Int) {
+		_distribution.schedule(type, num);
 	}
 	
 	public function allLanded():Void {
@@ -115,4 +129,7 @@ class GameCore extends Sprite
 	public function getDistribution():Distribution { return(_distribution); }
 	public function getActivePair():ActivePair { return(_activePair);}
 	public function getGameState():GameState { return(_state); }
+	
+	public function getActiType():Int { return(_actiType); }
+	public function getActiNum():Int { return(_actiNum); }
 }

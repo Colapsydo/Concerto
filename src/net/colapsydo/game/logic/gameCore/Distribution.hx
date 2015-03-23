@@ -1,5 +1,8 @@
 package net.colapsydo.game.logic.gameCore;
+
 import net.colapsydo.utils.mt.Rand;
+import openfl.events.Event;
+import openfl.events.EventDispatcher;
 import openfl.Vector;
 
 /**
@@ -7,7 +10,7 @@ import openfl.Vector;
  * @author Colapsydo
  * model of distribution
  */
-class Distribution
+class Distribution extends EventDispatcher
 {
 	var _gameSeed:Int;
 	var _randomGenerator:Rand;
@@ -20,7 +23,10 @@ class Distribution
 	
 	static var _noteNum:Int;
 	
+	static public inline var ACTIVATION:String = "activation";
+	
 	public function new(colorNum:Int) {
+		super();
 		_maxType = colorNum;
 		init();
 	}
@@ -30,6 +36,8 @@ class Distribution
 		
 		_gameSeed = 726854171;
 		_randomGenerator = new Rand(_gameSeed);
+		
+		_transfoSchedule = new Vector<Int>();
 		
 		_limitType = 6;
 		_nextPairs = new Vector<Int>();
@@ -55,28 +63,45 @@ class Distribution
 		_nextPairs[3] = uniformDistribution();
 		_noteNum++;
 		//trace(_nextPairs);
-		if (_noteNum % 2 == 0) {
+		//if (_noteNum % 2 == 0) {
 			//dispatchEvent
-		}
+		//}
 		return(note);
 	}
 	
 	public function transform(color:Int):Int {
 		if (color < _limitType) {
 			color++;
-			_maxType = color > _maxType?color:_maxType;
-			//if (color != _transfoSchedule[0]) {
-				//
-			//}
+			if (color > _maxType) {
+				if (_transfoSchedule.length>0) {
+					if (color == _transfoSchedule[0] && _noteNum == _transfoSchedule[1]) {
+						_maxType = color;
+						_transfoSchedule.splice(0, 2);
+					}
+				}else {
+					dispatchEvent(new Event(Distribution.ACTIVATION));
+				}
+			}
 			return(color);
 		}else {
 			return(0);
 		}
 	}
 	
+	public function schedule(type:Int, num:Int) {
+		if (_noteNum == num) {
+			_maxType = type+1;
+		}else {
+			_transfoSchedule.push(type);
+			_transfoSchedule.push(num);
+		}
+	}
+	
 	//GETTERS && SETTERS
 	
 	public function getSeed():Int { return(_gameSeed); }
+	public function getMaxType():Int { return(_maxType); }
+	public function getNoteNum():Int { return(_noteNum); }
 	public function getNote(index:Int):Int { return(_nextPairs[index]);}
 	
 }
