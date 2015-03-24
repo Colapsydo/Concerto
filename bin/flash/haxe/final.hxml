@@ -17,6 +17,6 @@
 -D advanced-telemetry
 -swf-version 11.2
 -swf bin/flash/bin/Concerto.swf
--swf-header 640:640:60:230023
+-swf-header 1000:640:60:230023
 -cp bin/flash/haxe
 -D final

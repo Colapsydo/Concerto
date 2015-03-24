@@ -13,12 +13,12 @@ import openfl.Vector;
  */
 class Playground extends Sprite
 {
-	var _playerNum:Int;
+	var _gameType:Int; //0:1P - 1:1PvsCPU - 2:1Pvs2P - 3:CPUvsCPU
 	var _players:Vector<GameCore>;
 	
-	public function new(playerNum:Int) {
+	public function new(gameType:Int) {
 		super();
-		_playerNum = playerNum;
+		_gameType = gameType;
 		addEventListener(Event.ADDED_TO_STAGE, init);
 	}
 	
@@ -32,7 +32,7 @@ class Playground extends Sprite
 		_players.push(gameCore);
 		gameCore.addEventListener(Distribution.ACTIVATION, activationHandler);
 		
-		if (_playerNum == 2) {
+		if (_gameType>0) {
 			var gameCore:GameCore = new GameCore(1);
 			addChild(gameCore);
 			_players.push(gameCore);
@@ -47,19 +47,22 @@ class Playground extends Sprite
 		var othNum:Int=0;
 		var actiType:Int=0;
 		
-		if (_playerNum == 2) {
+		if (_gameType > 0) {
 			if (e.target == _players[0]) {
 				actiNum = _players[0].getActiNum();
 				actiType = _players[0].getActiType();
 				othNum = _players[1].getActiNum();
+				_players[0].activationBonus(actiType);
 			}else {
 				actiNum = _players[1].getActiNum();
 				actiType = _players[1].getActiType();
 				othNum = _players[0].getActiNum();
+				_players[1].activationBonus(actiType);
 			}
 		}else {
 			actiNum = _players[0].getActiNum();
 			actiType = _players[0].getActiType();
+			_players[0].activationBonus(actiType);
 		}
 		
 		actiNum = actiNum > othNum ? actiNum : othNum;
@@ -71,6 +74,11 @@ class Playground extends Sprite
 	
 	//GETTERS && SETTERS
 	
+	public function getPlayerNum():Int { 
+		if (_gameType > 0) { return(2); }
+		return(1);
+	}
+	public function getGameType():Int { return(_gameType); }
 	public function getGameCore(player:Int = 0):GameCore {
 		return(_players[player]);
 	}

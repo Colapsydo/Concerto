@@ -55,7 +55,9 @@ class GridView extends Sprite
 		_activePair = _gameCore.getActivePair();
 		
 		if (_step == 0) {
-			_step = Std.int(stage.stageHeight * .95 / _gridHeight);
+			//_step = Std.int(stage.stageHeight * .95 / _gridHeight);
+			_step = 40;
+			//_step = Std.int(stage.stageHeight * .95 / _gridHeight);
 			NoteBall.setSize(GridView.getStep());
 			NoteBall.setGridSize(_gridHeight);
 		}

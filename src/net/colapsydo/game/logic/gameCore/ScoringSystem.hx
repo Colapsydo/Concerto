@@ -70,6 +70,12 @@ import openfl.Vector;
 		trace("total score: ",_totalScore);
 	}
 	
+	public function activationBonus(actiType:Int) {
+		_totalScore += _colorWeight[actiType-1] * 1000 * _hitMultiplier;
+		_attackScore += _colorWeight[actiType-1] * 1000 * _hitMultiplier;
+		trace("activation Bonus", _colorWeight[actiType-1] * 1000, _hitMultiplier); 
+	}
+	
 	//GETTERS && SETTERS
 	
 	public function getHitScore():Int { return(_hitScore); }

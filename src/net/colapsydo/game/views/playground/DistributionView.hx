@@ -11,6 +11,7 @@ import openfl.events.Event;
  */
 class DistributionView extends Sprite
 {
+	var _player:Int;
 	var _distribution:Distribution;
 	
 	var _pairSprite:Sprite;
@@ -22,9 +23,10 @@ class DistributionView extends Sprite
 	
 	static public inline var SWITCHED:String = "switched";
 	
-	public function new(distribution:Distribution) {
+	public function new(distribution:Distribution, player:Int) {
 		super();
 		_distribution = distribution;
+		_player = player;
 		addEventListener(Event.ADDED_TO_STAGE, init);
 	}
 	

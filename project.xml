@@ -9,7 +9,7 @@
 	<app main="net.colapsydo.Main" file="Concerto" path="bin" />
 	
 	<window background="#230023" fps="60" />
-	<window width="640" height="640" unless="mobile" />
+	<window width="1000" height="640" unless="mobile" />
 	<window orientation="landscape" vsync="false" antialiasing="0" if="cpp" />
 	
 	<!-- classpath, haxe libs -->

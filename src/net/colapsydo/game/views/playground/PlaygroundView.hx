@@ -3,6 +3,8 @@ package net.colapsydo.game.views.playground;
 import net.colapsydo.game.logic.Playground;
 import openfl.display.Sprite;
 import openfl.events.Event;
+import net.colapsydo.game.logic.gameCore.GameCore;
+import openfl.Vector;
 
 /**
  * ...
@@ -12,7 +14,7 @@ import openfl.events.Event;
 class PlaygroundView extends Sprite
 {
 	var _playground:Playground;
-	var _game:GameView;
+	var _games:Vector<GameView>;
 	
 	public function new(playground:Playground) {
 		super();
@@ -22,8 +24,10 @@ class PlaygroundView extends Sprite
 	
 	private function init(e:Event):Void {
 		removeEventListener(Event.ADDED_TO_STAGE, init);
-		
-		_game = new GameView(_playground.getGameCore());
-		addChild(_game);
+		for (i in 0..._playground.getPlayerNum()) {
+			var game:GameView = new GameView(_playground.getGameCore(i));
+			addChild(game);
+			game.x = i * 500;
+		}
 	}
 }

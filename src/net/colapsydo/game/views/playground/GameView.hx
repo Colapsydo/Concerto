@@ -31,14 +31,19 @@ class GameView extends Sprite
 		
 		_grid = new GridView(_gameCore);
 		addChild(_grid);
-		_grid.x = (stage.stageWidth - _grid.width) * .5;
-		//_grid.y = (stage.stageHeight - _grid.height) * .5;
 		_grid.y = 20;
 		
-		_distribution = new DistributionView(_gameCore.getDistribution());
+		_distribution = new DistributionView(_gameCore.getDistribution(), _gameCore.getPlayer());
 		addChild(_distribution);
-		_distribution.x = _grid.x + _grid.width + 10;
 		_distribution.y = 20;
+		
+		if (_gameCore.getPlayer() == 0) {
+			_grid.x = 20;
+			_distribution.x = _grid.x + _grid.width + 10;
+		}else {
+			_distribution.x = 20;
+			_grid.x = _distribution.x + _distribution.width + 10;			
+		}
 		
 		stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
 		stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);

@@ -97,13 +97,13 @@ class ApplicationMain {
 			stencilBuffer: false,
 			title: "Concerto",
 			vsync: false,
-			width: Std.int (640),
+			width: Std.int (1000),
 			
 		}
 		
 		#if js
 		#if (munit || utest)
-		flash.Lib.embed (null, 640, 640, "230023");
+		flash.Lib.embed (null, 1000, 640, "230023");
 		#end
 		#else
 		create ();

@@ -21,6 +21,8 @@ enum GameState {
 class GameCore extends Sprite
 {
 	var _player:Int;
+	var _cpu:Bool;
+	var _cpuLevel:Int;
 	var _rules:GameRules;
 	var _grid:GameGrid;
 	var _distribution:Distribution;
@@ -31,10 +33,11 @@ class GameCore extends Sprite
 	
 	var _actiNum:Int;
 	var _actiType:Int;
+	var _activattion:Bool;
 	
 	static public inline var UPDATE:String = "update";
 	
-	public function new(player:Int) {
+	public function new(player:Int, ?cpu:Bool=false, ?level:Int=0) {
 		super();
 		_player = player;
 		addEventListener(Event.ADDED_TO_STAGE, init);
@@ -93,6 +96,10 @@ class GameCore extends Sprite
 		addEventListener(Event.ENTER_FRAME, efHandler);
 	}
 	
+	public function activationBonus(actiType:Int) {
+		_scoringSystem.activationBonus(actiType);
+	}
+	
 	public function schedule(type:Int, num:Int) {
 		_distribution.schedule(type, num);
 	}
@@ -124,6 +131,7 @@ class GameCore extends Sprite
 	
 	//GETTERS && SETTERS
 	
+	public function getPlayer():Int { return(_player); }
 	public function getRules():GameRules { return(_rules); }
 	public function getGameGrid():GameGrid { return(_grid); }
 	public function getDistribution():Distribution { return(_distribution); }
