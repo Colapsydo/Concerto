@@ -40,6 +40,7 @@ class GameCore extends Sprite
 	public function new(player:Int, ?cpu:Bool=false, ?level:Int=0) {
 		super();
 		_player = player;
+		_cpu = cpu;
 		addEventListener(Event.ADDED_TO_STAGE, init);
 	}
 	
@@ -132,12 +133,12 @@ class GameCore extends Sprite
 	//GETTERS && SETTERS
 	
 	public function getPlayer():Int { return(_player); }
+	public function getCPU():Bool { return(_cpu);}
 	public function getRules():GameRules { return(_rules); }
 	public function getGameGrid():GameGrid { return(_grid); }
 	public function getDistribution():Distribution { return(_distribution); }
 	public function getActivePair():ActivePair { return(_activePair);}
 	public function getGameState():GameState { return(_state); }
-	
 	public function getActiType():Int { return(_actiType); }
 	public function getActiNum():Int { return(_actiNum); }
 }

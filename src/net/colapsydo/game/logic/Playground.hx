@@ -13,7 +13,7 @@ import openfl.Vector;
  */
 class Playground extends Sprite
 {
-	var _gameType:Int; //0:1P - 1:1PvsCPU - 2:1Pvs2P - 3:CPUvsCPU
+	var _gameType:Int; //0:1P - 1:1Pvs2P - 2:1PvsCPU - 3:CPUvsCPU
 	var _players:Vector<GameCore>;
 	
 	public function new(gameType:Int) {
@@ -33,7 +33,8 @@ class Playground extends Sprite
 		gameCore.addEventListener(Distribution.ACTIVATION, activationHandler);
 		
 		if (_gameType>0) {
-			var gameCore:GameCore = new GameCore(1);
+			var cpu:Bool = _gameType > 1;
+			var gameCore:GameCore = new GameCore(1, cpu);
 			addChild(gameCore);
 			_players.push(gameCore);
 			gameCore.addEventListener(Distribution.ACTIVATION, activationHandler);

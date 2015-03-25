@@ -1,6 +1,8 @@
 package net.colapsydo.game.views.playground;
 
+import net.colapsydo.game.controllers.Controller;
 import net.colapsydo.game.controllers.KeyboardController;
+import net.colapsydo.game.controllers.CpuController;
 import net.colapsydo.game.logic.gameCore.GameCore;
 import openfl.display.Sprite;
 import openfl.events.Event;
@@ -13,7 +15,7 @@ import openfl.events.KeyboardEvent;
 class GameView extends Sprite
 {
 	var _gameCore:GameCore;
-	var _controller:KeyboardController;
+	var _controller:Controller;
 	
 	var _grid:GridView;
 	var _distribution:DistributionView;
@@ -27,7 +29,7 @@ class GameView extends Sprite
 	private function init(e:Event):Void {
 		removeEventListener(Event.ADDED_TO_STAGE, init);
 		
-		_controller = new KeyboardController(_gameCore.getActivePair());
+		_controller = _gameCore.getCPU() == true ? new CpuController(_gameCore.getActivePair(), _gameCore.getGameGrid()) : new KeyboardController(_gameCore.getActivePair());
 		
 		_grid = new GridView(_gameCore);
 		addChild(_grid);
@@ -45,6 +47,7 @@ class GameView extends Sprite
 			_grid.x = _distribution.x + _distribution.width + 10;			
 		}
 		
+		//only if not cpu
 		stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
 		stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
 		updateHandler();

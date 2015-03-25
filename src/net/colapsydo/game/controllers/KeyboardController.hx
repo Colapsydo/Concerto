@@ -7,7 +7,7 @@ import openfl.events.KeyboardEvent;
  * ...
  * @author Colapsydo
  */
-class KeyboardController
+class KeyboardController extends Controller
 {
 	var _activePair:ActivePair;
 	var _left:Bool;
@@ -22,10 +22,11 @@ class KeyboardController
 	
 	
 	public function new(activePair:ActivePair) {
+		super();
 		_activePair = activePair;
 	}
 	
-	public function keyboardDown(e:KeyboardEvent):Void {
+	public override function keyboardDown(e:KeyboardEvent):Void {
 		switch(Std.int(e.keyCode)) {
 			case 37: //left
 				if (_left == false) {
@@ -81,7 +82,7 @@ class KeyboardController
 		}
 	}
 	
-	public function keyboardUp(e:KeyboardEvent):Void {
+	public override function keyboardUp(e:KeyboardEvent):Void {
 		switch(Std.int(e.keyCode)) {
 			case 37: //left
 				_left = false;
@@ -100,11 +101,11 @@ class KeyboardController
 		}
 	}
 	
-	public function working(working:Bool) {
+	public override function working(working:Bool) {
 		_working = working;
 	}
 	
-	public function update():Void {
+	public override function update():Void {
 		_rotTtimer++;
 		_rotATtimer++;
 		if (_left == true || _right==true) {
@@ -116,9 +117,4 @@ class KeyboardController
 			}
 		}
 	}
-	
-	
-	
-	
-	
 }

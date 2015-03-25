@@ -19,6 +19,11 @@ class DistributionView extends Sprite
 	var _pair2:DistributionPair;
 	var _pair3:DistributionPair;
 	
+	var _horizontalStep:Int;
+	var _pair1X:Int;
+	var _pair2X:Int;
+	var _pair3X:Int;
+	
 	var _mask:Shape;
 	
 	static public inline var SWITCHED:String = "switched";
@@ -32,6 +37,18 @@ class DistributionView extends Sprite
 	
 	private function init(e:Event):Void {
 		removeEventListener(Event.ADDED_TO_STAGE, init);
+		
+		if (_player == 0) {
+			_horizontalStep = -2;
+			_pair1X = 30;
+			_pair2X = 50;
+			_pair3X = 70;
+		}else {
+			_horizontalStep = 2;
+			_pair1X = 50;
+			_pair2X = 30;
+			_pair3X = 10;
+		}
 		
 		_pairSprite = new Sprite();
 		_pairSprite.graphics.beginFill(0x9999EF);
@@ -62,11 +79,11 @@ class DistributionView extends Sprite
 	//HANDLERS
 	
 	private function nextHandler(e:Event):Void {
-		_pair1.x -=2;
+		_pair1.x +=_horizontalStep;
 		_pair1.y -= 10;
-		_pair2.x -= 2; // from 50 to 30 /20
+		_pair2.x += _horizontalStep; // from 50 to 30 /20
 		_pair2.y -= 10; // from 150 to 50 /100
-		_pair3.x -= 2; 
+		_pair3.x += _horizontalStep; 
 		_pair3.y -= 10;
 		
 		if (_pair2.y <= 50) {
@@ -81,11 +98,11 @@ class DistributionView extends Sprite
 	//PRIVATE FUNCTIONS
 	
 	inline function moveback():Void {
-		_pair1.x = 30;
+		_pair1.x = _pair1X;
 		_pair1.y = 50;
-		_pair2.x = 50;
+		_pair2.x = _pair2X;
 		_pair2.y = 150;
-		_pair3.x = 70;
+		_pair3.x = _pair3X;
 		_pair3.y = 250;
 	}
 	
