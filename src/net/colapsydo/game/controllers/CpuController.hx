@@ -18,6 +18,7 @@ class CpuController extends Controller
 	//Logic
 	var _bestSlavePos:SlavePosition;
 	var _bestMasterX:Int;
+	var _bestScore:Float;
 	
 	var _masterScoreDown:Vector<Float>;
 	var _masterScoreUp:Vector<Float>;
@@ -47,31 +48,55 @@ class CpuController extends Controller
 		_bestSlavePos = LEFT;
 		_bestMasterX = 2;
 		
-		var _bestScore:Float = 0.0;
-		var _betterPos:Vector<SlavePosition> = new Vector<SlavePosition>();
-		var _betterX:Vector<Int> = new Vector<Int>();
+		_bestScore = Math.NEGATIVE_INFINITY;
+		var betterPos:Vector<SlavePosition> = new Vector<SlavePosition>();
+		var betterX:Vector<Int> = new Vector<Int>();
 		
-		var _masterScoreDown:Vector<Float> = new Vector<Float>();
-		var _masterScoreUp:Vector<Float> = new Vector<Float>();
-		var _SlaveScoreDown:Vector<Float> = new Vector<Float>();
-		var _SlaveScoreUp:Vector<Float> = new Vector<Float>();
+		var masterScoreDown:Vector<Float> = new Vector<Float>();
+		var masterScoreUp:Vector<Float> = new Vector<Float>();
+		var slaveScoreDown:Vector<Float> = new Vector<Float>();
+		var slaveScoreUp:Vector<Float> = new Vector<Float>();
 		var masterType:Int = _activePair.getMasterNote();
 		var slaveType:Int = _activePair.getSlaveNote();
 		var firstEmptyCell:Int;
 		
 		for (i in 1...7) {
 			firstEmptyCell = _grid.getFirstEmptyCell(i);
-			_masterScoreDown.push(scoring(firstEmptyCell*8+i, masterType));
-			_masterScoreUp.push(scoring((firstEmptyCell+1)*8+i, masterType));
-			_SlaveScoreDown.push(scoring(firstEmptyCell*8+i, slaveType));
-			_SlaveScoreUp.push(scoring((firstEmptyCell+1)*8+i, slaveType));
+			masterScoreDown.push(scoring(firstEmptyCell*8+i, masterType));
+			masterScoreUp.push(scoring((firstEmptyCell+1)*8+i, masterType));
+			slaveScoreDown.push(scoring(firstEmptyCell*8+i, slaveType));
+			slaveScoreUp.push(scoring((firstEmptyCell+1)*8+i, slaveType));
 		}
 		
-		trace(_masterScoreDown);
+		//trace("");
+		//trace("down");
+		//trace(masterScoreDown);
+		//trace(slaveScoreDown);
+		//trace("up");
+		//trace(masterScoreUp);
+		//trace(slaveScoreUp);
 		
-		var tempPos:SlavePosition = LEFT;
-		var tempMasterPosX:Int = 2;
-		//var temp
+		
+		for (i in 0...6) {
+			if (i > 0) {
+				searchForBest(i, masterScoreDown[i] + slaveScoreDown[i - 1], LEFT, betterPos, betterX);
+			}
+			if (i < 5) {
+				searchForBest(i, masterScoreDown[i] + slaveScoreDown[i + 1], RIGHT, betterPos, betterX);
+			}
+			searchForBest(i, masterScoreUp[i] + slaveScoreDown[i], BOTTOM, betterPos, betterX);
+			searchForBest(i, masterScoreDown[i] + slaveScoreUp[i], TOP, betterPos, betterX);
+		}
+		
+		//trace("best");
+		//trace(betterPos);
+		//trace(betterX);
+		
+		if (betterX.length > 0) {
+			var index:Int = Std.int(betterX.length * Math.random());
+			_bestSlavePos = betterPos[index];
+			_bestMasterX = betterX[index];
+		}
 	}
 	
 	inline function scoring(index:Int, noteType:Int):Float{
@@ -81,7 +106,7 @@ class CpuController extends Controller
 		
 		value = _grid.getValue(index - 9);
 		if (value >0) {
-			score += cellSum(value, noteType);
+			score += cellSum(value, noteType)*.5;
 			step++;
 		}
 		value = _grid.getValue(index - 8);
@@ -91,7 +116,7 @@ class CpuController extends Controller
 		}
 		value = _grid.getValue(index - 7);
 		if (value >0) {
-			score += cellSum(value, noteType);
+			score += cellSum(value, noteType)*.5;
 			step++;
 		}
 		value = _grid.getValue(index - 1);
@@ -106,7 +131,7 @@ class CpuController extends Controller
 		}
 		value = _grid.getValue(index + 7);
 		if (value >0) {
-			score += cellSum(value, noteType);
+			score += cellSum(value, noteType)*.5;
 			step++;
 		}
 		value = _grid.getValue(index + 8);
@@ -116,7 +141,7 @@ class CpuController extends Controller
 		}
 		value = _grid.getValue(index + 9);
 		if (value >0) {
-			score += cellSum(value, noteType);
+			score += cellSum(value, noteType)*.5;
 			step++;
 		}
 		
@@ -129,6 +154,28 @@ class CpuController extends Controller
 		difference = noteType - value;
 		difference *= difference > 0 ? 2 : -2;
 		return(noteType - difference);
+	}
+	
+	inline function searchForBest(index:Int, score:Float, pos:SlavePosition, bestPos:Vector<SlavePosition>, bestX:Vector<Int>):Void {
+		//trace(index, pos);
+		//trace(score, _bestScore);
+		if (score >= _bestScore) {
+			if (score == _bestScore) {
+				bestPos.push(pos);
+				bestX.push(index+1);
+			}else {
+				_bestScore = score;
+				bestPos.splice(0, bestPos.length);
+				bestPos.push(pos);
+				bestX.splice(0, bestX.length);
+				bestX.push(index+1);
+			}
+		}
+		//trace("besties");
+		//trace(_bestScore);
+		//trace(bestPos);
+		//trace(bestX);
+		
 	}
 	
 	public override function keyboardDown(e:KeyboardEvent):Void {
@@ -210,10 +257,29 @@ class CpuController extends Controller
 		_working = working;
 		if (_working == true) {
 			selectPosition();
+		}else {
+			_activePair.upSpeed(false);
 		}
 	}
 	
 	public override function update():Void {
+		var diffX:Int = _bestMasterX-_activePair.getMasterPosX();
+		if (diffX != 0) {
+			if (diffX > 0) {
+				_activePair.horizontalMove( 1 );
+			}else {
+				_activePair.horizontalMove( -1 );
+			}
+		}
+		if (_activePair.getSlavePos() != _bestSlavePos) {
+			_activePair.rotate(true,true);
+		}else {
+			if (diffX == 0) {
+				_activePair.upSpeed(true);
+			}
+		}
+		
+		
 		_rotTtimer++;
 		_rotATtimer++;
 		if (_left == true || _right==true) {

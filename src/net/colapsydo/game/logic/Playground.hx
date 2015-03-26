@@ -27,7 +27,7 @@ class Playground extends Sprite
 		
 		_players = new Vector<GameCore>();
 		
-		var gameCore:GameCore = new GameCore(0);
+		var gameCore:GameCore = _gameType <3 ? new GameCore(0) : new GameCore(0,true);
 		addChild(gameCore);
 		_players.push(gameCore);
 		gameCore.addEventListener(Distribution.ACTIVATION, activationHandler);

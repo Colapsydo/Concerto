@@ -48,8 +48,11 @@ class GameView extends Sprite
 		}
 		
 		//only if not cpu
-		stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
-		stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
+		if (_gameCore.getCPU() == false) {
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+			stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
+		}
+		
 		updateHandler();
 		_gameCore.addEventListener(GameCore.UPDATE, updateHandler);
 		
