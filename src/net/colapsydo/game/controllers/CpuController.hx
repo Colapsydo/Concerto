@@ -100,7 +100,7 @@ class CpuController extends Controller
 	}
 	
 	inline function scoring(index:Int, noteType:Int):Float{
-		var score:Float = 0.0;
+		var score:Float = index>104 ? -80 : 0.0;
 		var step:Int = 0;
 		var value:Int;
 		
@@ -146,14 +146,15 @@ class CpuController extends Controller
 		}
 		
 		step = step > 0?step:1;
-		return(score / (noteType * step));
+		//return(score / step);
+		return(score);
 	}
 	
 	inline function cellSum(value:Int, noteType:Int):Float {
 		var difference:Int;
 		difference = noteType - value;
-		difference *= difference > 0 ? 2 : -2;
-		return(noteType - difference);
+		difference *= difference > 0 ? 1 : -1;
+		return(10 - difference);
 	}
 	
 	inline function searchForBest(index:Int, score:Float, pos:SlavePosition, bestPos:Vector<SlavePosition>, bestX:Vector<Int>):Void {
