@@ -1,4 +1,4 @@
-package net.colapsydo.game.views.playground;
+package net.colapsydo.game.views.playground.game;
 
 import net.colapsydo.game.controllers.Controller;
 import net.colapsydo.game.controllers.KeyboardController;
@@ -19,6 +19,7 @@ class GameView extends Sprite
 	
 	var _grid:GridView;
 	var _distribution:DistributionView;
+	var _attackCounter:AttackCounterView;
 	
 	public function new(gameCore:GameCore) {
 		super();
@@ -39,6 +40,10 @@ class GameView extends Sprite
 		addChild(_distribution);
 		_distribution.y = 20;
 		
+		_attackCounter = new AttackCounterView(_gameCore.getScoreSys());
+		addChild(_attackCounter);
+		_attackCounter.y = _distribution.y + _distribution.height - 80;
+		
 		if (_gameCore.getPlayer() == 0) {
 			_grid.x = 20;
 			_distribution.x = _grid.x + _grid.width + 10;
@@ -46,6 +51,7 @@ class GameView extends Sprite
 			_distribution.x = 20;
 			_grid.x = _distribution.x + _distribution.width + 10;			
 		}
+		_attackCounter.x = _distribution.x + (80-_attackCounter.width)*.5;
 		
 		//only if not cpu
 		if (_gameCore.getCPU() == false) {
@@ -76,6 +82,7 @@ class GameView extends Sprite
 				_grid.applyGravity();
 			case CHAIN:
 				_grid.removeSolutions();
+				_attackCounter.updateCounter();
 			case LOOSE:
 			
 		}

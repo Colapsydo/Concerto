@@ -1,4 +1,4 @@
-package net.colapsydo.game.views.playground;
+package net.colapsydo.game.views.playground.game;
 
 import net.colapsydo.game.logic.gameCore.GameCore;
 import net.colapsydo.game.logic.gameCore.GameGrid;
@@ -7,7 +7,7 @@ import openfl.display.Shape;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.Vector;
-import net.colapsydo.game.views.playground.NoteBall.NoteState;
+import net.colapsydo.game.views.playground.game.NoteBall.NoteState;
 import net.colapsydo.game.logic.Playground;
 
 /**

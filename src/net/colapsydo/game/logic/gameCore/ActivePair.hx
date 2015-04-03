@@ -1,5 +1,5 @@
 package net.colapsydo.game.logic.gameCore;
-import net.colapsydo.game.views.playground.ActivePairView;
+import net.colapsydo.game.views.playground.game.ActivePairView;
 import openfl.events.Event;
 import openfl.events.EventDispatcher;
 

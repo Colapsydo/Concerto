@@ -1,10 +1,10 @@
-package net.colapsydo.game.logic.gameCore;
+package net.colapsydo.game.views.playground.game;
 
 /**
  * ...
  * @author Colapsydo
  */
-class GameScore
+class AttackView
 {
 
 	public function new() 

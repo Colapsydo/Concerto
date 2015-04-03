@@ -1,4 +1,4 @@
-package net.colapsydo.game.views.playground;
+package net.colapsydo.game.views.playground.game;
 
 import openfl.display.Sprite;
 import openfl.events.Event;

@@ -1,4 +1,4 @@
-package net.colapsydo.game.views.playground;
+package net.colapsydo.game.views.playground.game;
 
 import lime.math.Vector2;
 import openfl.display.Sprite;

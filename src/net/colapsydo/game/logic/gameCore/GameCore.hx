@@ -135,10 +135,13 @@ class GameCore extends Sprite
 	public function getPlayer():Int { return(_player); }
 	public function getCPU():Bool { return(_cpu);}
 	public function getRules():GameRules { return(_rules); }
+	public function getScoreSys():ScoringSystem { return(_scoringSystem); }
 	public function getGameGrid():GameGrid { return(_grid); }
 	public function getDistribution():Distribution { return(_distribution); }
 	public function getActivePair():ActivePair { return(_activePair);}
 	public function getGameState():GameState { return(_state); }
 	public function getActiType():Int { return(_actiType); }
 	public function getActiNum():Int { return(_actiNum); }
+	
+	
 }

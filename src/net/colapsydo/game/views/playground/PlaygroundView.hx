@@ -1,9 +1,9 @@
 package net.colapsydo.game.views.playground;
 
 import net.colapsydo.game.logic.Playground;
+import net.colapsydo.game.views.playground.game.GameView;
 import openfl.display.Sprite;
 import openfl.events.Event;
-import net.colapsydo.game.logic.gameCore.GameCore;
 import openfl.Vector;
 
 /**

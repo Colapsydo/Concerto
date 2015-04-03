@@ -1,4 +1,4 @@
-package net.colapsydo.game.views.playground;
+package net.colapsydo.game.views.playground.game;
 
 import net.colapsydo.game.logic.gameCore.Distribution;
 import openfl.display.Shape;

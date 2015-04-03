@@ -1,6 +1,7 @@
-package net.colapsydo.game.views.playground;
+package net.colapsydo.game.views.playground.game;
 
 import net.colapsydo.game.logic.gameCore.ActivePair;
+import net.colapsydo.game.views.playground.game.NotePreview;
 import openfl.display.Shape;
 import openfl.display.Sprite;
 import openfl.events.Event;
