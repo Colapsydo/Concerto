@@ -23,6 +23,7 @@ class GridView extends Sprite
 	var _grid:Vector<Int>;
 	var _activePair:ActivePair;
 	var _solutions:Vector<Vector<Int>>;
+	var _blocks:Vector<Int>;
 	
 	var _noteballPool:NoteballPool;
 	var _lightBallPool:LightBallPool;
@@ -35,6 +36,8 @@ class GridView extends Sprite
 	var _activePairView:ActivePairView;
 	var _mask:Shape;
 	var _lightBallsContainer:Sprite;
+	
+	var _reading:Bool;
 
 	var _cleanFunction:Dynamic;
 	
@@ -123,6 +126,8 @@ class GridView extends Sprite
 		}else {
 			_cleanFunction = cleanPuy;
 		}
+		
+		readGrid();
 	}
 	
 	//HANDLERS
@@ -194,7 +199,11 @@ class GridView extends Sprite
 		_gravityNum--;
 		//trace(_gravityNum, " notes to fall");
 		if (_gravityNum == 0) {
-			_gameCore.allLanded();
+			if (_reading == false) {
+				_gameCore.allLanded();
+			}else {
+				_reading = false;
+			}
 		}
 	}
 	
@@ -219,7 +228,6 @@ class GridView extends Sprite
 		_noteballPool.discardNoteball(_gridNote[indexX].splice(indexY, 1)[0]);
 		
 		_destructionNum--;
-		
 		if (_destructionNum == 0) {
 			_gameCore.destructionComplete();
 		}
@@ -227,7 +235,6 @@ class GridView extends Sprite
 	
 	private function transformationHandler(e:Event):Void {
 		_destructionNum--;
-		
 		if (_destructionNum == 0) {
 			_gameCore.destructionComplete();
 		}
@@ -280,6 +287,27 @@ class GridView extends Sprite
 				_destructionNum++;
 			}
 		}
+		
+		for (i in 0..._blocks.length) {
+			indexX = _blocks[i];
+			var value:Int = _gridData.getValue(indexX);
+			indexY = Std.int(indexX / 8)-1;
+			indexX %= 8;
+			indexX--;
+			if (value != 0) {
+				targetX = indexX;
+				targetY = indexY;
+				_gridNote[indexX][indexY].changeState(TRANSFORMING);
+				_gridNote[indexX][indexY].setType(value);
+				_destructionNum++;
+				_gridNote[indexX][indexY].incoming();
+				_gridNote[indexX][indexY].arrived();
+			}else {
+				_gridNote[indexX][indexY].setTarget(null); 
+				_gridNote[indexX][indexY].changeState(EXPLODING);
+				_destructionNum++;
+			}
+		}
 	}
 	
 	function cleanPuy():Void {
@@ -297,6 +325,17 @@ class GridView extends Sprite
 		}
 	}
 	
+	function readGrid():Void {
+		_reading = true;
+		for (i in 8..._grid.length) {
+			if (i % 8 > 0 && i % 8 < 7) {
+				if (_grid[i] != 0) {
+					addNoteToGridView(_grid[i], i % 8, Std.int(i / 8), Std.int(i / 8), 0);
+				}
+			}
+		}
+	}
+	
 	function addNoteToGridView(type:Int, indexX:Int, indexY:Int, absY:Float, vel:Float):Void {
 		var noteBall:NoteBall = _noteballPool.getNoteball();
 		noteBall.alpha = 1;
@@ -310,7 +349,6 @@ class GridView extends Sprite
 		
 		noteBall.changeState(FALLING);
 		_gravityNum++;
-		
 	}
 	
 	function gridIdle():Void{		
@@ -348,6 +386,7 @@ class GridView extends Sprite
 	
 	public function removeSolutions():Void{
 		_solutions = _gridData.getSolutions();
+		_blocks = _gridData.getBlocks();
 		_cleanFunction();
 	}
 	

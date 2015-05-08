@@ -92,9 +92,9 @@ class GameCore extends Sprite
 	
 	public function play():Void{
 		_state = PLAY;
-		dispatchEvent(new Event(GameCore.UPDATE));	
 		_activePair.addEventListener(ActivePair.PLAYED, playedHandler);
 		addEventListener(Event.ENTER_FRAME, efHandler);
+		dispatchEvent(new Event(GameCore.UPDATE));	
 	}
 	
 	public function activationBonus(actiType:Int) {
@@ -120,6 +120,7 @@ class GameCore extends Sprite
 				_state = LOOSE;
 			}
 		}
+		
 		dispatchEvent(new Event(GameCore.UPDATE));	
 	}
 	

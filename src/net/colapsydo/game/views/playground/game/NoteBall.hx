@@ -147,20 +147,31 @@ class NoteBall extends Sprite
 			case 6:
 				this.graphics.beginFill(0xFF800E);
 		}
-		if (grid == true) {
+		if (_type > 0) {
+			if (grid == true) {
 			this.graphics.drawCircle(0, -size, size);
+			}else {
+				this.graphics.drawCircle(0, 0, size);
+			}
+			this.graphics.endFill();
+			this.graphics.lineStyle(1, 0);
+			if (grid == true) {
+				this.graphics.moveTo(0, -size);
+				this.graphics.lineTo(0, -2*size);
+			}else {
+				this.graphics.moveTo(0, 0);
+				this.graphics.lineTo(0, -size);
+			}
 		}else {
-			this.graphics.drawCircle(0, 0, size);
+			var step:Int = -_type;
+			var offSize:Float = size / step;
+			this.graphics.beginFill(0xEFEFEF - step * 0x333333);
+			this.graphics.lineStyle(2, 0);
+			this.graphics.drawRect( -size, -2 * size, 2 * size, 2 * size);
+			//this.graphics.drawCircle(0, -size, size);
+			this.graphics.endFill();
 		}
-		this.graphics.endFill();
-		this.graphics.lineStyle(1, 0);
-		if (grid == true) {
-			this.graphics.moveTo(0, -size);
-			this.graphics.lineTo(0, -2*size);
-		}else {
-			this.graphics.moveTo(0, 0);
-			this.graphics.lineTo(0, -size);
-		}
+		
 	}
 	
 	//PUBLIC FUNCTIONS

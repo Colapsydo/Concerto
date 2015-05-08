@@ -16,6 +16,7 @@ class GameGrid
 	var _checked:Vector<Bool>;
 	var _fusion:Vector<Int>;
 	var _solutions:Vector<Vector<Int>>;
+	var _blocks:Vector<Int>;
 	var _firstEmptyCells:Vector<Int>;
 	
 	var _gridHeight:Int;
@@ -39,22 +40,23 @@ class GameGrid
 		
 		_grid = new Vector<Int>();
 		for (i in 0..._gridHeight*8) {
-			if (i % 8 == 0 || (i + 1) % 8 == 0 || i < 8) {
-				_grid.push( -1);
+			if (i % 8 == 0 || (i + 1) % 8 == 0 || i < 24) {
+				_grid.push(-3);
 			}else {
 				_grid.push(0);
 			}
 		}
 		
 		_firstEmptyCells = new Vector<Int>();
-		for (i in 0...8) {
-			_firstEmptyCells.push(1);
-		}
+		_firstEmptyCells.length = 8;
+		_firstEmptyCells.fixed = true;
+		defineEmptyCells();
 		_firstEmptyCells[0] = _gridHeight-1;
-		_firstEmptyCells[7] = _gridHeight-1;
+		_firstEmptyCells[7] = _gridHeight - 1;
 		
 		_checked = new Vector<Bool>();
 		_checked.length = _grid.length;
+		_blocks = new Vector<Int>();
 		
 		readGrid();
 	}
@@ -66,6 +68,16 @@ class GameGrid
 			_grid[_solutions[i][0]] = _distribution.transform(_grid[_solutions[i][0]]);
 			for (j in 1..._solutions[i].length) {
 				_grid[_solutions[i][j]]= 0;
+			}
+		}
+		var index:Int;
+		var length:Int = _blocks.length - 1;
+		for (i in 0..._blocks.length) {
+			index = length - i;
+			_grid[_blocks[index]] += _grid[_blocks[index]] < 0 ? 1 : 0;
+			
+			if(_blocks.lastIndexOf(_blocks[index])!=index){
+				_blocks.splice(index, 1);
 			}
 		}
 	}
@@ -86,6 +98,7 @@ class GameGrid
 	}
 	
 	//Recurrence function of BFS undirected connectivity
+	//inline function searchGroup(index:Int, color:Int, group:Vector<Int>):Void {
 	function searchGroup(index:Int, color:Int, group:Vector<Int>):Void {
 		//set the node to explored
 		_checked[index] = true;
@@ -95,6 +108,7 @@ class GameGrid
 		if (_grid[index - 1] == color && _checked[index - 1] == false) {
 			searchGroup(index - 1, color, group); 
 			//_fusion[index] += ;
+			//_fusion[index-1] += ;
 		}
 		if (_grid[index + 8] == color && _checked[index + 8] == false) {
 			searchGroup(index + 8, color, group);
@@ -107,9 +121,33 @@ class GameGrid
 		}
 	}
 	
+	//inline function detectNeighboringBlocks():Void {
+	function detectNeighboringBlocks():Void {
+		var index:Int;
+		for (i in 0..._solutions.length) {
+			for (j in 0..._solutions[i].length) {
+				index = _solutions[i][j];
+				if (index % 8 > 1 && _grid[index - 1] < 0) { 
+					_blocks.push(index - 1);
+				}
+				if (index > 15 && _grid[index - 8] < 0) { 
+					_blocks.push(index - 8);
+				}
+				if (index % 8 < 6 && _grid[index + 1] < 0) {
+					_blocks.push(index + 1);
+				}
+				if (_grid[index + 8] < 0) {
+					_blocks.push(index + 8);
+				}
+			}
+		}
+		//trace(_blocks);
+	}
+	
 	function scanGrid():Void {
 		//reset solutions
 		_solutions = new Vector<Vector<Int>>();
+		_blocks = new Vector<Int>();
 		
 		//reset node explored status
 		_checked = new Vector<Bool>();
@@ -133,6 +171,8 @@ class GameGrid
 				}
 			}
 		}
+		
+		if (_solutions.length > 0) {detectNeighboringBlocks();}
 	}
 	
 	function applyGravity():Void{
@@ -152,7 +192,7 @@ class GameGrid
 		}
 	}
 	
-	function gridSwap(index1:Int, index2:Int):Void {
+	inline function gridSwap(index1:Int, index2:Int):Void {
 		var value1:Int = _grid[index1];
 		var value2:Int = _grid[index2];
 		_grid[index2] = value1;
@@ -208,7 +248,7 @@ class GameGrid
 		_grid[index2] = 0;
 	}
 	
-	public function lookForSolutions():Void {
+	public function lookForSolutions():Void {		
 		applyGravity();
 		scanGrid();
 	}
@@ -259,6 +299,7 @@ class GameGrid
 	public function getGridHeight():Int { return(_gridHeight);}
 	public function getValue(index:Int):Int { return(_grid[index]); }
 	public function getSolutions():Vector<Vector<Int>> { return(_solutions); }
+	public function getBlocks():Vector<Int> { return(_blocks); }
 	public function getFirstEmptyCell(col:Int):Int { return(_firstEmptyCells[col]); }
 	
 }

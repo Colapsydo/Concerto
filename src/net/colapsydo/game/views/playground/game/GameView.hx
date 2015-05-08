@@ -59,9 +59,7 @@ class GameView extends Sprite
 			stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
 		}
 		
-		updateHandler();
 		_gameCore.addEventListener(GameCore.UPDATE, updateHandler);
-		
 		_gameCore.startGame();
 	}
 	
@@ -89,7 +87,7 @@ class GameView extends Sprite
 	}
 	
 	private function distribHandler(e:Event):Void {
-		_distribution.addEventListener(DistributionView.SWITCHED, distribHandler);
+		_distribution.removeEventListener(DistributionView.SWITCHED, distribHandler);
 		_gameCore.play();
 	}
 	

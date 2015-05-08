@@ -16,7 +16,7 @@ class Main extends Sprite
 	public function new() 
 	{
 		super();
-		
+	
 		_game = new Game();
 		addChild(_game);
 		
